@@ -1,5 +1,8 @@
 # TwinProject
 
+Pour télécharger le projet : "git clone https://github.com/ATOFLIX/TwinProject.git"
+Version de PHP : 7.3.12
+
 Première version de l'interface de l'application qui inclut :
 
     Une BDD que vous pouvez générer avec la commande de migration suivante (Contient 1 seule table user) :
