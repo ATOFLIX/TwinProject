@@ -7,7 +7,8 @@ Première version de l'interface de l'application qui inclut :
 
     Un formulaire de connexion, afin de pouvoir se connecter soit en utilisateur, soit en adminitrateur.
         - Pour tester ajouter un utilisateurs via le chemin "http://127.0.0.1:8000/admin/inscription"
-        Par défaut le rôle de ce nouvel utilisateur sera définit en 'ROLE_USER', vous pouvez changez manuellement dans la BDD, pour faire vos tests.
+        Par défaut le rôle de ce nouvel utilisateur sera définit en 'ROLE_USER', vous pouvez changez 
+        manuellement dans la BDD en 'ROLE_ADMIN' pour faire vos tests.
 
     Le formulaire d'inscription avec la gestion des comptes ne sera accessible que par l'administrateur en décommentant la ligne
     40 du fichier security.yaml.
