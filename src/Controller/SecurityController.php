@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("admin/inscription", name="security_controller")
+     * @Route("/inscription", name="security_controller")
      */
     public function registration(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder) {
         $user = new User();
@@ -26,10 +26,11 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+
             $hash = $encoder->encodePassword($user, $user->getPassword());
-
+            
             $user->setPassword($hash);
-
+            $user->setRoles("ROLE_USER");
             $manager->persist($user);
             $manager->flush();
 

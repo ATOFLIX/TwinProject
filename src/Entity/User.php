@@ -91,23 +91,19 @@ class User implements UserInterface
         return $this;
     }
 
-
-    public function eraseCredentials() {}
-
-    public function getSalt() {}
-
     public function getRoles() {
         return [$this->roles];
     }
 
     public function setRoles(string $roles): self
     {
-        if($roles === null ) {
-            $this->roles = "ROLE_USER";
-        } else {
-            $this->roles = $roles;
-        }
+        if($roles === null) $this->roles = ["ROLE_USER"];
+        $this->roles = $roles;
         
         return $this;
     }
+
+    public function eraseCredentials() {}
+
+    public function getSalt() {}
 }

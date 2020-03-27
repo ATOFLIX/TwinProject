@@ -30,7 +30,6 @@
                         {% if is_granted('ROLE_ADMIN') %}
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gestion des utilisateurs</a>
                             <div class="dropdown-menu" aria-labelledby="gestion">
-                                <a class="dropdown-item" href="{{ path('security_controller') }}">Inscription</a>
                                 <a class="dropdown-item" href="#">Editer</a>
                                 <a class="dropdown-item" href="#">Supprimer</a>
                             </div>
@@ -44,6 +43,13 @@
                             <a class="nav-link my-2 my-sm-0" href="{{ path('security_logout') }}">Déconnexion</a>
                         {% endif %}
                     </li>
+
+                    <li class="nav-item">
+                        {% if not app.user %}
+                            <a class="nav-link" href="{{ path('security_controller') }}">Inscription</a>
+                        {% endif %}
+                    </li>
+
                 </ul>
             </div>
         </nav>
