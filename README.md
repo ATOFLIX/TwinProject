@@ -1,7 +1,8 @@
 # TwinProject
 
 Pour télécharger le projet : "git clone https://github.com/ATOFLIX/TwinProject.git"
-Il faut ensuite se placer le dossier du projet et exécuter la commande suivante : "composer update" afin de télécharger les dernières mises à jour et les paquets nécessaires au projet
+Il faut ensuite se placer le dossier du projet et exécuter la commande suivante : 
+"composer update" afin de télécharger les dernières mises à jour et les paquets nécessaires au projet
 
 Version de PHP : 7.3.12
 
@@ -21,11 +22,11 @@ Première version de l'interface de l'application qui inclut :
     Bouton de déconnexion.
 
     Une page "Vue 3D" afin d'afficher le jumeau à l'aide de Three.js, accéssible seulement si on est connecté.
-
-Deuxième version de l'interface de l'application qui inclut :
+   
+   Deuxième version de l'interface de l'application qui inclut :
+    
     Ce qui a été annoncé précédemment avec en plus : 
         - une reprise de la structure de la base de donnée avec les champs "nom" et "prénom" qui ont été ajouté
         - un nouveau controller accessible que par l'admin et lui permettant de gérer les comptes et un formulaire d'inscription géré               par l'admin qui aura l'autorisation d'ajouter, de supprimer et de modifier les données d'un compte.
         - nous essairons aussi de permettre à l'admin de changer le rôle d'un utilisateur à travers l'interface et non passer par la BDD
-        
-
+    
