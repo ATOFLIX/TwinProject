@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
 		<link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
-        
         {% block stylesheets %}{% endblock %}
 
     </head>
@@ -26,13 +25,9 @@
                         {% endif %}
                     </li>
 
-                    <li class="nav-item dropdown">
+                    <li class="nav-item">
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gestion des utilisateurs</a>
-                            <div class="dropdown-menu" aria-labelledby="gestion">
-                                <a class="dropdown-item" href="#">Editer</a>
-                                <a class="dropdown-item" href="#">Supprimer</a>
-                            </div>
+                            <a class="nav-link" href="{{ path('account') }}">Compte</a>
                         {% endif %}
                     </li>
 
@@ -49,7 +44,6 @@
                             <a class="nav-link" href="{{ path('security_controller') }}">Inscription</a>
                         {% endif %}
                     </li>
-
                 </ul>
             </div>
         </nav>

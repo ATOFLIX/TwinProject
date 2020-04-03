@@ -1,54 +1,82 @@
 <?php
 
 namespace App\Entity;
-
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
+ * User
+ *
+ * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(
- *  fields={"email"},
- *  message="L'email que vous avez indiqué est déjà utilisé !"
- * )
+ * fields = {"email"},
+ * message = "L'email que vous avez saisi est déjà utilisé !",
+ * fields = {"username"},
+ * message = "Ce username est déjà pris !")
  */
 class User implements UserInterface
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=255, nullable=false)
      * @Assert\Email()
      */
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @var string
+     *
+     * @ORM\Column(name="username", type="string", length=255, nullable=false)
      */
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=255, nullable=false)
      * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire minimum 8 caractères")
      */
     private $password;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="roles", type="string", length=255, nullable=false)
+     */
+    private $roles;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nom", type="string", length=255, nullable=false)
+     */
+    private $nom;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="prenom", type="string", length=255, nullable=false)
+     */
+    private $prenom;
+
+    /**
      * @Assert\EqualTo(propertyPath="password", message="Vous n'avez pas tapé le même mot de passe")
      */
     public $confirm_password;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $roles;
 
     public function getId(): ?int
     {
@@ -91,7 +119,40 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRoles() {
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): self
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    public function eraseCredentials() {}
+
+    public function getSalt() {}
+
+    /*public function getRoles(): ?string
+    {
+        return $this->roles;
+    }*/
+
+    public function getRoles(){
         return [$this->roles];
     }
 
@@ -99,11 +160,7 @@ class User implements UserInterface
     {
         if($roles === null) $this->roles = ["ROLE_USER"];
         $this->roles = $roles;
-        
+
         return $this;
     }
-
-    public function eraseCredentials() {}
-
-    public function getSalt() {}
 }

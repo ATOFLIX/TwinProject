@@ -22,6 +22,20 @@ class UserRepository extends ServiceEntityRepository
     // /**
     //  * @return User[] Returns an array of User objects
     //  */
+
+
+    public function Order($value)
+    {
+        return $this->createQueryBuilder('t')
+            ->orderBy('t.nom', 'ASC');
+    }
+    public function getAllByTerm(?string $term, $column, $param)
+    {
+        return $this->createQueryBuilder('e')
+        ->andwhere('e.'.$column.' LIKE =')
+        ->setParameter('param',$param)
+        ->orderBy('e.prenom', 'ASC');
+    }
     /*
     public function findByExampleField($value)
     {
