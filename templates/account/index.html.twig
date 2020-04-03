@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Account{% endblock %}
+
+{% block body %}
+ <h3>Choisir les critères de sélection : </h3>
+{{ form_start(form) }}
+    <div class="formRech">
+    	<p class="TitreCarre">Critères Identitaires</p>
+    	<div style="margin-top:20px;"></div>
+            <div style="margin-top:10px">
+            	<div class="FormLabel FormElem">{{ form_label(form.username,'Username : ') }}</div>
+        		<div class="FormWidget FormElem">{{ form_widget(form.username) }}</div>
+            </div>
+            <div style="margin-top:10px">
+            	<div class="FormLabel FormElem">{{ form_label(form.nom,'Nom : ') }}</div>
+        		<div class="FormWidget FormElem">{{ form_widget(form.nom) }}</div>
+            </div>
+            <div style="margin-top:10px">
+            	<div class="FormLabel FormElem">{{ form_label(form.prenom,'Prénom : ') }}</div>
+        		<div class="FormWidget FormElem">{{ form_widget(form.prenom) }}</div>
+            </div>
+            <div style="margin-bottom:20px;"></div>
+            
+            <button type="submit" class="btn btn-outline-success btn-sm" style="margin-left:15px;margin-bottom:15px" title="Voir tous les comptes ">Afficher</button>
+{{ form_end(form) }}
+    </div>
+
+    <table class="table table-striped" style="margin-top:40px;width:95% !important;margin-left:auto;margin-right:auto;">
+
+		<!-- 1ere ligne du tableau -->
+		<tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+			<th>Email</th>
+			<th>Username</th>
+			<th>Password</th>
+			<th>Rôles</th>
+		</tr>
+		{% for user in pagination %}
+		<tr>
+            <td>{{ user.nom }}</td>
+            <td>{{ user.prenom }}</td>
+			<td>{{ user.email }}</td>
+			<td>{{ user.username }}</td>
+            <td>{{ user.password }}</td>
+			<td>{% for roles in user.roles %}
+                    {{ roles }}
+                    {% if roles == "ROLE_USER" %}
+
+                    {# {{form(formNewAdmin)}} #} 
+                    
+                    
+                    
+                    <!--<form>
+                            <a href="#confirmation"><input type="checkbox" id="admin" name="role_admin" value="role_admin"></a>
+                            <div>
+                                <a href="#confirmation">Enregistrer</a>
+                                <div id="confirmation_{{user.id}}" hidden style="margin-left:7px;margin-top:5px">
+                                    <h6 style="margin-left:15px;margin-bottom:15px">Souhaitez-vous attribuer les droits d'administreur à {{ (user.nom) }} {{ (user.prenom) }} ?</h6>
+                                    <div class="row">			
+                                        <a href="{{ path('account_del', {'id' : user.id}) }}" type="submit" class="btn btn-secondary" style="margin-left:80px;margin-bottom:15px;color: white" onclick="return (confirm('{{ (user.nom) }}  {{ (user.prenom)  }} va être administrateur !'));">OUI</a>
+                                        <a class="btn btn-secondary" onclick="AbortDelete('{{user.id}}');" style="margin-left:10px;margin-bottom:15px;color: white">NON</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>-->
+                        {% endif %}
+            </td>
+            {% endfor %}
+			<td><a href="{{ path('account_nb', {'id' : user.id}) }}"><img src="{{ asset('img/edit.png') }}" title="Modifier (id={{ (user.id) }})"></a></td>
+            <td><a class="btn-danger" href="#confirm" onclick="DeleteAccount('{{user.id}}');"><img src="{{ asset('img/del.png')}}" title="Supprimer (id={{ (user.id) }})"></a>
+                <!---->
+				<div id="confirm_{{user.id}}" hidden style="margin-left:7px;margin-top:5px">
+	        			<h6 style="margin-left:15px;margin-bottom:15px">Voulez-vous supprimer {{ (user.username) }} ?</h6>
+	        			<div class="row">			
+        					<a href="{{ path('account_del', {'id' : user.id}) }}" type="submit" class="btn btn-secondary" style="margin-left:80px;margin-bottom:15px;color: white" onclick="return (confirm('{{ (user.nom) }}  {{ (user.prenom)  }} va être supprimé !'));">OUI</a>
+	        				<a class="btn btn-secondary" onclick="AbortDelete('{{user.id}}');" style="margin-left:10px;margin-bottom:15px;color: white">NON</a>
+	    				</div>
+				</div>
+		</tr>
+		{% endfor %}
+</table>
+
+<nav aria-label="Page navigation example">
+    {{ knp_pagination_render(pagination) }}
+</nav>
+<div style="padding-top:10px"></div>
+
+<div class="formRech">
+    {{ form_start(formNewUser) }}
+<div style="margin-top:20px;"></div>
+<p class="TitreCarre">Nouveau administrateur ou utilisateur</p>
+    <div style="margin-top: 10px">
+        {{ form_label(formNewUser.nom,'Nom')}}
+        {{ form_widget(formNewUser.nom)  }}
+    </div>
+    <div style="margin-top: 10px">
+        {{ form_label(formNewUser.prenom,'Prénom')}}
+        {{ form_widget(formNewUser.prenom)  }}
+    </div>
+    <div style="margin-top: 10px">
+        {{ form_label(formNewUser.email,'Email')}}
+        {{ form_widget(formNewUser.email)  }}
+    </div>
+    <div style="margin-top: 10px">
+        {{ form_label(formNewUser.username,'Username')}}
+        {{ form_widget(formNewUser.username) }}
+    </div>  
+    <div style="margin-top: 10px">
+        {{ form_label(formNewUser.password,'Password')}}
+        {{ form_widget(formNewUser.password) }}
+    </div> 
+    <div style="margin-top: 10px">
+        {{ form_label(formNewUser.confirm_password,'Password confirmation')}}
+        {{ form_widget(formNewUser.confirm_password) }}
+    </div>
+    <div style="margin-top: 10px;border-radius: 0 0 15px 15px">	
+        <button type="submit" class="btn btn-outline-success btn-sm" style="margin-left:15px;margin-bottom:15px">{%if id == null%}Créer {%else%} Modifier {%endif%} </button>
+    {{ form_end(formNewUser) }}
+        {% if id != null %}
+        <a type="submit" class="btn btn-outline-success btn-sm" style="margin-left:15px;margin-bottom:15px">Annuler</a>
+    </div>
+        {%endif%}
+</div>
+
+<script>
+function DeleteAccount(id)
+{
+    document.getElementById('confirm_'+id).hidden = false;
+}
+function AbortDelete(id)
+{
+    document.getElementById('confirm_'+id).hidden = true;
+}
+</script>
+
+
+{% endblock %}
