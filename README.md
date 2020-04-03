@@ -1,6 +1,7 @@
 # TwinProject
 
 Pour télécharger le projet : "git clone https://github.com/ATOFLIX/TwinProject.git"
+
 Il faut ensuite se placer le dossier du projet et exécuter la commande suivante : 
 "composer update" afin de télécharger les dernières mises à jour et les paquets nécessaires au projet
 
