@@ -36,6 +36,8 @@
 			<th>Username</th>
 			<th>Password</th>
 			<th>Rôles</th>
+            <th>Actions</th>
+            <th></th>
 		</tr>
 		{% for user in pagination %}
 		<tr>
@@ -68,16 +70,18 @@
                         {% endif %}
             </td>
             {% endfor %}
-			<td><a href="{{ path('account_nb', {'id' : user.id}) }}"><img src="{{ asset('img/edit.png') }}" title="Modifier (id={{ (user.id) }})"></a></td>
+			<td><a href="{{ path('account_edit', {'id' : user.id}) }}"><img src="{{ asset('img/edit.png') }}" title="Modifier (id={{ (user.id) }})"></a></td>
+ 
             <td><a class="btn-danger" href="#confirm" onclick="DeleteAccount('{{user.id}}');"><img src="{{ asset('img/del.png')}}" title="Supprimer (id={{ (user.id) }})"></a>
-                <!---->
-				<div id="confirm_{{user.id}}" hidden style="margin-left:7px;margin-top:5px">
+                <div id="confirm_{{user.id}}" hidden style="margin-left:7px;margin-top:5px">
 	        			<h6 style="margin-left:15px;margin-bottom:15px">Voulez-vous supprimer {{ (user.username) }} ?</h6>
 	        			<div class="row">			
         					<a href="{{ path('account_del', {'id' : user.id}) }}" type="submit" class="btn btn-secondary" style="margin-left:80px;margin-bottom:15px;color: white" onclick="return (confirm('{{ (user.nom) }}  {{ (user.prenom)  }} va être supprimé !'));">OUI</a>
 	        				<a class="btn btn-secondary" onclick="AbortDelete('{{user.id}}');" style="margin-left:10px;margin-bottom:15px;color: white">NON</a>
 	    				</div>
 				</div>
+                <!---->
+
 		</tr>
 		{% endfor %}
 </table>

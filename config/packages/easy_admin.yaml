@@ -1,0 +1,51 @@
+easy_admin:
+    # On définit le nom de l'interface d'administration
+    site_name: 'Gestion des utilisateurs'
+    # On définit l'affichage de l'utilisateur
+    user:
+        display_name: true
+        display_avatar: false
+    design:
+        # Ces lignes définiront notre menu
+        menu:
+            - { label: 'Utilisateurs' }
+            - { entity: 'User', label: 'Utilisateurs', icon: 'user' }
+    
+    entities:
+        User:
+            # Correspond au fichier User.php
+            class: App\Entity\User
+            controller: App\Controller\UserAdminController
+            label: 'Utilisateur'
+            # On définit ci-dessous le contenu de la liste qui affichera les utilisateurs et les critères de tri 
+            list:
+                title: 'Utilisateurs'
+                fields:
+                    - id
+                    - nom
+                    - prenom
+                    - { property: 'username', label: 'Pseudo'}
+                    - email
+                    - { property: 'roles', label: 'Rôles', type: json_array}
+                actions:
+                    - { name: 'edit', icon: 'pencil', label: false, css_class: 'btn btn-secondary' }
+                    - { name: 'delete', icon: 'trash', label: false, css_class: 'btn btn-danger' }
+            # On définit ci-dessous le contenu du formulaire d'ajout ou modificateur d'utilisateur
+            new:
+                fields:
+                    - nom
+                    - prenom
+                    - { property: 'username', label: 'Pseudo' }
+                    - email
+                    - { property: 'password', type: 'password', label: 'Mot de passe' }
+                    - { property: 'roles', label: 'Rôles', type: choice, type_options: {expanded: true, multiple: true, choices: {'Utilisateur':'ROLE_USER', 'Administrateur':'ROLE_ADMIN'}} }
+            edit:
+                fields:
+                    - nom
+                    - prenom
+                    - { property: 'username', label: 'Pseudo' }
+                    - email
+                    - { property: 'password', type: 'password', label: 'Mot de passe', type_options: { required: false } }
+                    - { property: 'roles', label: 'Rôles', type: choice, type_options: {expanded: true, multiple: true, choices: {'Utilisateur':'ROLE_USER', 'Administrateur':'ROLE_ADMIN'}} }
+
+

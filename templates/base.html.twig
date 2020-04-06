@@ -27,10 +27,13 @@
 
                     <li class="nav-item">
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a class="nav-link" href="{{ path('account') }}">Compte</a>
+                            <a class="nav-link" href="/admin">Gestion des utilisateurs</a>
                         {% endif %}
                     </li>
 
+                </ul>
+
+                <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         {% if not app.user %}
                             <a class="nav-link" href="{{ path('security_login') }}">Connexion</a>
@@ -45,6 +48,7 @@
                         {% endif %}
                     </li>
                 </ul>
+                
             </div>
         </nav>
 

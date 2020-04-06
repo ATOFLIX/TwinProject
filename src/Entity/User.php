@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * fields = {"email"},
  * message = "L'email que vous avez saisi est déjà utilisé !",
  * fields = {"username"},
- * message = "Ce username est déjà pris !")
+ * message = "Ce pseudo est déjà pris !")
  */
 class User implements UserInterface
 {
@@ -53,11 +53,9 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="roles", type="string", length=255, nullable=false)
+     * @ORM\Column(name="roles", type="json")
      */
-    private $roles;
+    private $roles = [];
 
     /**
      * @var string
@@ -77,6 +75,11 @@ class User implements UserInterface
      * @Assert\EqualTo(propertyPath="password", message="Vous n'avez pas tapé le même mot de passe")
      */
     public $confirm_password;
+
+
+    public function __toString() {
+        return $this->email;
+    }
 
     public function getId(): ?int
     {
@@ -147,20 +150,20 @@ class User implements UserInterface
 
     public function getSalt() {}
 
-    /*public function getRoles(): ?string
+    public function getRoles(): array
     {
-        return $this->roles;
-    }*/
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
 
-    public function getRoles(){
-        return [$this->roles];
+        return array_unique($roles);
     }
 
-    public function setRoles(string $roles): self
+    public function setRoles(array $roles): self
     {
-        if($roles === null) $this->roles = ["ROLE_USER"];
         $this->roles = $roles;
 
         return $this;
     }
+    
 }

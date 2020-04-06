@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\User;
+use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Form\RegistrationType;
 use App\Form\AdminType;
@@ -24,7 +25,6 @@ class AccountController extends AbstractController
     }
     /**
      * @Route("/account", name="account")
-     * @Route("/account/{id}", name="account_nb")
      */
     public function index($id = null, Request $request, EntityManagerInterface $em, UserRepository $tRep, PaginatorInterface $paginator, 
                             UserPasswordEncoderInterface $encoder)
@@ -120,11 +120,24 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/account/{id}", name="account_edit")
+     */
+    public function edit(User $user) {
+
+        $form = $this->createForm(UserType::class,$user);
+        return $this->render('account/editUser.html.twig',[
+            "user" => $user,
+            "form" => $form->createView()
+        ]);
+    }
+
+
      /**
      * @Route("/account/delete/{id}", name="account_del")
+     * 
      */
-    public function Del($id)
-    {
+    public function delete($id) {
         $entityManager = $this->getDoctrine()->getManager();
 
         $user = $entityManager->getRepository(user::class)->find($id);
