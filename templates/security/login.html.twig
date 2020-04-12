@@ -1,24 +1,45 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Accueil{% endblock %}
+
 {% block body %}
+
 {% if error %}
     <div class="alert alert-danger">
         {{ error.messageKey | trans(error.messagedata, 'security')}}
     </div>
 {% endif %}
 
-    <h1>Connexion !</h1>
+    <div class="modal-dialog text-center">
+        <div class="col-sm-9 main-section">
+            <div class="modal-content">
 
-    <form action="{{ path('security_login') }}" method="post">
-        <div class="form-group">
-            <input placeholder="Pseudo ..." required name="_username" type="text" class="form-control">
+                <div class="col-12 user-img">
+                    <img src="img/face.png">
+                </div>
+                
+                <div class="col-12 form-input">
+                    <h2 class="login-title">Connexion</h2>
+                    <form action="{{ path('security_login') }}" method="post">
+                        <div class="form-group-login">
+                            <input placeholder="Pseudo ..." required name="_username" type="text" class="form-control">
+                        </div>
+                        <div class="form-group-login">
+                            <input placeholder="Mot de passe ..." required name="_password" type="password" class="form-control">
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Se connecter</button>
+                        
+                    </form>
+                </div>
+
+                {# <div class="col-12 forgot">
+                    <a href="#">Mot de passe oublié ?</a>
+                </div> #}
+
+            </div>
         </div>
-        <div class="form-group">
-            <input placeholder="Mot de passe ..." required name="_password" type="password" class="form-control">
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success">Se connecter</button>
-        </div>
-    </form>
+    </div>
+		
 
 {% endblock %}

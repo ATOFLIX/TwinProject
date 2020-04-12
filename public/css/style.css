@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+/*********************************************************POLICE*************************************************************/
+@font-face {
+	font-family: 'azonixregular';
+    src: url('/font/azonix-webfont.eot');
+	src: url('/font/azonix-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('/font/azonix-webfont.otf') format('truetype'),
+         url('/font/azonix-webfont.woff') format('woff'),
+         url('/font/azonix-webfont.svg#azonixregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+/*****************************************************************************************************************************/
+
+
+/*********************************************************NAVBAR*************************************************************/
+
+.navbar-brand {
+	font-family: azonixregular, sans-serif;
+	font-size: 1.5em;
+}
+
+/*****************************************************************************************************************************/
+
+
+/*********************************************************ACCEUIL*************************************************************/
+
+body {
+	font-family: 'Roboto', sans-serif;
+	/* background: url(/img/web.jpg) no-repeat center center fixed;
+	background-color: #222222;;
+	background-size: cover;*/
+	background: radial-gradient(circle, rgba(218,241,255,1) 0%, rgba(62,83,104,1) 95%);
+}
+
+.main-section {
+	margin: 0 auto;
+	margin-top: 130px;
+	padding: 0;
+}
+
+.modal-content {
+	background-color: #434e5a;
+	opacity: 1;
+	padding: 0 18px;
+	border-radius: 10px;
+}
+
+.user-img img {
+	height: 120px;
+	width: 120px;
+}
+
+.user-img {
+	margin-top: -60px;
+	margin-bottom: 45px;
+}
+
+.form-group-login {
+	margin-bottom: 25px;
+}
+
+.form-group-login input {
+	height: 45px;
+	border-radius: 5px;
+	border: 0;
+	font-size: 18px;
+	letter-spacing: 2px;
+	padding-left: 54px;
+}
+
+.form-group-login::before {
+	font-family: 'Font Awesome\ 5 Free';
+	content: "\f007";
+	position: absolute;
+	font-size: 22px;
+	left: 28px;
+	padding-top: 4px;
+	color: #555e60;
+}
+
+.form-group-login:last-of-type::before {
+	content: "\f023";
+}
+
+.form-input button {
+	width: 45%;
+	margin: 5px 0 25px;
+}
+
+.btn-success {
+	background-color: #375a7f;
+	font-size: 19px;
+	border-radius: 5px;
+	border: 1px solid #daf1ff;
+}
+
+.btn-grad {
+	background-image: linear-gradient(to right, #314755 0%, #26a0da 51%, #314755 100%)
+}
+
+.btn-grad:hover { 
+	background-position: right center;
+} 
+
+.login-title {
+	padding-bottom: 15px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
