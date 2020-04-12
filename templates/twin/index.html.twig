@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TwinController!{% endblock %}
+{% block title %}Visualisation 3D{% endblock %}
 
 {% block body %}
 
@@ -8,42 +8,87 @@
 
     <script src="http://mrdoob.github.com/three.js/build/three.min.js"></script>
     <script type="text/javascript">
-    
-        var scene = new THREE.Scene();
+		
+        window.addEventListener('DOMContentLoaded', (function(){
+			var width = window.innerWidth;
+			var height = window.innerHeight;
+			
+			var scene = new THREE.Scene();
 
-        //Creation du render
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setClearColor( 0xffffff, 1);
-        renderer.setSize( window.innerWidth, window.innerHeight );
+			var camera = new THREE.PerspectiveCamera( 80, width / height, 1, 1000 );
+    			camera.position.x = 10;
+    			camera.position.z = 20;
+    			scene.add( camera );
 
-        //On ajoute l'objet à la page html
-        document.body.appendChild( renderer.domElement );
+			var light = new THREE.DirectionalLight( 0xffffff, 1.5 );
+    			light.position.set( 1, 1, 1 ).normalize();
+    			scene.add( light );
 
-        //creation de la camera
-        var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+			var light2 = new THREE.DirectionalLight( 0xffffff );
+    			light2.position.set( -1, -1, -1 ).normalize();
+    			scene.add( light2 );
 
-        //La forme de l'objet
-        var geometry = new THREE.BoxGeometry(1, 1, 1 );
+			renderer = new THREE.WebGLRenderer();
+    			renderer.setSize( width, height );
 
-        //Creation de l'objet
-        var material = new THREE.MeshNormalMaterial();
-        var box = new THREE.Mesh(geometry, material);
-        box.rotation.x = 0.5;
-        box.rotation.y = 1;
-        box.rotation.z = 1.5;
-        box.position.z = -5;
-        scene.add(box);
+			document.body.appendChild( renderer.domElement );
 
-        animate();
 
-        function animate() {
-          requestAnimationFrame(animate);
-          box.rotation.x += 0.01;
-          box.rotation.y += 0.02;
-          box.rotation.z += 0.03;
-          renderer.render(scene, camera);
-        }
+			var meshArray = [];
+    			var geometry = new THREE.CubeGeometry(2, 4, 2, 6, 6, 6);
+			var geometry2 = new THREE.SphereGeometry(1.75, 20, 20);
+			var geometry3 = new THREE.CubeGeometry(4, 2, 4, 6, 6, 6);
 
+			meshArray[0] = new THREE.Mesh( geometry3, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+			meshArray[1] = new THREE.Mesh( geometry2, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        		meshArray[1].position.y = 2 * 1;
+        		meshArray[2] = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        		meshArray[2].position.y = 2 * 2;
+			meshArray[3] = new THREE.Mesh( geometry2, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        		meshArray[3].position.y = 2 * 3;
+			meshArray[4] = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        		meshArray[4].position.y = 2 * 4;
+			meshArray[5] = new THREE.Mesh( geometry2, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        		meshArray[5].position.y = 2 * 5;
+			meshArray[6] = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        		meshArray[6].position.y = 2 * 5;
+			meshArray[6].position.z = 2;
+			meshArray[6].rotation.x = Math.PI/2;
+
+			for( var i = 0; i < 7; i++){
+				scene.add( meshArray[i] );
+			}
+
+
+			var theta = 0;
+    			(function(){
+        			renderer.render( scene, camera );
+				meshArray[6].rotation.z -= (Math.PI / 360);
+
+        			meshArray[6].position.x = Math.sin( theta * Math.PI / 360 );
+        			meshArray[6].position.z = Math.cos( theta * Math.PI / 360 );
+
+        			camera.lookAt( scene.position );
+        			theta++;
+        			requestAnimationFrame( arguments.callee );
+    			})();
+			
+
+
+			var getElementPosition = function(element) {
+        			var top = left = 0;
+        			do {
+            				top  += element.offsetTop  || 0;
+            				left += element.offsetLeft || 0;
+            				element =  element.offsetParent;
+        			}
+        			while (element);
+        			return {top: top, left: left};
+    			}
+    			
+   
+		}), false);
+      
     </script>
 
 {% endblock %}

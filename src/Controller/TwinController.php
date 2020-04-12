@@ -12,7 +12,7 @@ class TwinController extends AbstractController
      */
     public function index()
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        # $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('twin/index.html.twig', [
             'controller_name' => 'TwinController',
         ]);

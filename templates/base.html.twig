@@ -27,7 +27,7 @@
 
                     <li class="nav-item">
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a class="nav-link" href="/admin">Gestion des utilisateurs</a>
+                            <a class="nav-link" href="{{ path('easyadmin') }}">Gestion des utilisateurs</a>
                         {% endif %}
                     </li>
 
