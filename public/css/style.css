@@ -2,12 +2,12 @@
 
 /*********************************************************POLICE*************************************************************/
 @font-face {
-	font-family: 'azonixregular';
-    src: url('/font/azonix-webfont.eot');
-	src: url('/font/azonix-webfont.eot?#iefix') format('embedded-opentype'),
-		 url('/font/azonix-webfont.otf') format('truetype'),
-         url('/font/azonix-webfont.woff') format('woff'),
-         url('/font/azonix-webfont.svg#azonixregular') format('svg');
+	font-family: azonixregular;
+    src: url(../font/azonix-webfont.eot);
+	src: url(../font/azonix-webfont.eot?#iefix) format("embedded-opentype"),
+		 url(../font/azonix-webfont.otf) format("truetype"),
+         url(../font/azonix-webfont.woff) format("woff"),
+         url(../font/azonix-webfont.svg#azonixregular) format("svg");
     font-weight: normal;
     font-style: normal;
 }
@@ -16,9 +16,17 @@
 
 /*********************************************************NAVBAR*************************************************************/
 
+
+.navbar {
+	font-family: azonixregular, sans-serif !important;
+}
+
 .navbar-brand {
-	font-family: azonixregular, sans-serif;
-	font-size: 1.5em;
+	transition-property: color; /* Active la transition sur background-color */
+    transition-duration: 1s; /* La transition dure 1s */
+}
+.navbar-brand:hover {
+	color: rgb(0, 0, 0) !important;
 }
 
 /*****************************************************************************************************************************/

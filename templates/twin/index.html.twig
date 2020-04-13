@@ -10,6 +10,7 @@
 		window.addEventListener('DOMContentLoaded', (function(){
 			var width = window.innerWidth;
 			var height = window.innerHeight;
+			var heightNavbar = 80;
 			
 			var scene = new THREE.Scene();
 
@@ -27,7 +28,7 @@
 				scene.add( light2 );
 
 			renderer = new THREE.WebGLRenderer();
-				renderer.setSize( width, height);
+				renderer.setSize( width, height-heightNavbar);
 
 			document.body.appendChild( renderer.domElement );
 
