@@ -120,6 +120,7 @@ class AccountController extends AbstractController
         ]);
     }
 
+    
     /**
      * @Route("/account/{id}", name="account_edit")
      */

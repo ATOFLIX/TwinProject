@@ -8,6 +8,8 @@ easy_admin:
     design:
         # Ces lignes définiront notre menu
         menu:
+            - { label: Accueil, route: 'robot', icon: 'home' }
+
             - { label: 'Utilisateurs' }
             - { entity: 'User', label: 'Utilisateurs', icon: 'user' }
     

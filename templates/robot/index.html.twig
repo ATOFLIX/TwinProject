@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des robots{% endblock %}
+
+{% block body %}
+    
+    <h1 id="title_config">Configuration du robot</h1>
+
+    <img src="{{ asset('/img/fanuc.png') }}" class="img-fluid" id="fanuc_img">
+
+    <div class="container mb-3 mt-3">
+        <table class="table table-bordered" style="width: 100%">
+            <thead class="thead-dark">
+                <tr>
+                    <th>id</th>
+                    <th>Adresse IP</th>
+                    <th>Modèle</th>
+                    <th>Axes</th>
+                    <th style="width:10%">Modifier</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for robot in fanuc  %}
+                <tr class="table-secondary">
+                    <th>{{ robot.id }}</th>
+                    <td>{{ robot.ip }}</td>
+                    <td>{{ robot.modele }}</td>
+                    <td>{{ robot.axes }}</td>
+                    <td><a href="{{ path('robot_edit', {'id' : robot.id}) }}"><img id="edit_logo" src="{{ asset('img/edit.png') }}" title="Modifier (id={{ (robot.id) }})"></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

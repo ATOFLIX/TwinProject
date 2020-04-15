@@ -23,7 +23,7 @@ security:
             form_login:
                 login_path: security_login
                 check_path: security_login
-                default_target_path: twin
+                default_target_path: robot
 
             logout:
                 path: security_logout
@@ -40,3 +40,4 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: /twin, roles: ROLE_USER }
+        - { path: ^/robot, roles: ROLE_USER }

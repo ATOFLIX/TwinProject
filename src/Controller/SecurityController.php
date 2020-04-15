@@ -21,7 +21,7 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $utils){
         
         if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            return $this->redirectToRoute('twin');
+            return $this->redirectToRoute('robot');
         }
 
         $user = new User();
