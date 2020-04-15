@@ -41,5 +41,8 @@ Troisième Version de l'interface :
     Compte User-> username = USER / mdp = useruser
     Compte Admin-> username = ADMIN / mdp = adminadmin
 
-
+Quatrième Version de l'interface :
     
+    Page de configuration du robot fanuc.
+    Entité 'robot' + Nouveau Controller 'RobotController'.
+    Création d'un formulaire Symfony pour la modification ddes données du robot.
