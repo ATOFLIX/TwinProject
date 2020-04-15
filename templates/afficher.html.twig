@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Affichage{% endblock %}
+
+{% block body %}
+<h1>Affichage de la séquence enregistrée</h1>
+
+{%  set lignes=sequence | split('\n') %}			{# filtre qui ajoute un séparateur à la fin de la ligne #}
+<table>
+{% for  une in lignes %}
+<tr><td>{{ une }}</td></tr>
+
+{% endfor %}
+
+</table>
+
+
+{% endblock %}

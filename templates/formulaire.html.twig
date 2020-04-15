@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Sélection fichiers!!
+{% endblock %}
+
+{% block body %}
+<form action="{{ path('sequence_traitement') }}" method="post">	{# renvoie vers la route "sequence_traitement" qui va traiter le formulaire#}
+
+	<div class="form-group">
+		<label for="exampleSelect1">Veuillez sélectionner une séquence: </label>
+		 <select class="form-control" name="selection"	id="exampleSelect1">
+			{%  for fichier in listeFichiers %}
+			<option>{{ fichier }}</option>
+			{% endfor %}
+
+		</select>
+	</div>
+
+	<input type="submit" name="afficher" value="afficher" /> 
+	<input type="submit" name="supprimer" value="supprimer" />
+	<input type="reset" value="annuler" />
+
+</form>
+
+
+
+
+
+{% endblock %}
