@@ -34,7 +34,7 @@ class Robot
     private $modele;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="integer")
      * @Assert\Positive
      * @Assert\LessThanOrEqual(10)
      */
@@ -69,12 +69,12 @@ class Robot
         return $this;
     }
 
-    public function getAxes(): ?float
+    public function getAxes()
     {
         return $this->axes;
     }
 
-    public function setAxes(float $axes): self
+    public function setAxes($axes): self
     {
         $this->axes = $axes;
 
