@@ -36,6 +36,22 @@
                         {% endif %}
                     </li>
 
+
+					<li class="nav-item">
+                        {% if is_granted('ROLE_USER') or is_granted('ROLE_ADMIN') %}
+
+                        <ul class="nav nav-pills">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Gestion des séquences</a>
+                                    <div class="dropdown-menu" style="">
+                                        <a class="dropdown-item" href="{{path('sequence_save')}}">Enregistrer</a>
+                                        <a class="dropdown-item" href="{{path('sequence_selectionner')}}">Affichage et suppression</a>
+                                    </div>
+                            </li>
+                        </ul>
+                        {% endif %}
+                    </li>
+                    
                     <li class="nav-item">
                         {% if is_granted('ROLE_ADMIN') %}
                             <a class="nav-link" href="{{ path('easyadmin') }}">Gestion des utilisateurs</a>
