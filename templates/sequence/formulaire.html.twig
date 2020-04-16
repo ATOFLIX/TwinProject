@@ -16,11 +16,19 @@ Sélection fichiers!!
 
 		</select>
 	</div>
+	
+	{% if listeFichiers %}
+	
 
-	<input type="submit" name="afficher" value="afficher" /> 
-	<input type="submit" name="supprimer" value="supprimer" />
-	<input type="reset" value="annuler" />
+	<input type="submit" name="afficher" value="afficher" class="btn btn-outline-success" /> 
+	<input type="submit" name="supprimer" value="supprimer" class="btn btn-outline-danger" />
+	<input type="reset" value="annuler" class="btn btn-outline-info" />
 
+{% else %}
+	<input type="submit"  name="afficher" value="afficher" disabled class="btn btn-outline-success" /> 
+	<input type="submit" name="supprimer" value="supprimer" disabled class="btn btn-outline-danger" />
+	<input type="reset" value="annuler" disabled class="btn btn-outline-info" />
+	{% endif %}
 </form>
 
 
