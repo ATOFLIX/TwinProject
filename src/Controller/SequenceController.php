@@ -150,10 +150,6 @@ class SequenceController extends AbstractController
      */
     public function traitementFormulaire()                          //Traitement du formulaire pour supprimer et afficher les séquences
     {
-        if(isset($_POST["selection"]))
-        {
-
-        
             $sequence = $_POST["selection"];                            //on récupère la séquence que l'on a sélectionné dans le formulaire
             if (isset($_POST["afficher"]))                              //si on a appuyé sur "afficher"
             {
@@ -167,12 +163,9 @@ class SequenceController extends AbstractController
                     "nomFichierSequence" => $sequence
                 ]);
             }
-        }
-        else{
-            return $this->redirectToRoute('robot',
-                );
-        }
     }
+        
+
 
     /**
      *
