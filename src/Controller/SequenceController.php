@@ -23,6 +23,7 @@ class SequenceController extends AbstractController
     {
         $filesystem =new Filesystem();
         $pathcourant=getcwd();
+        $filesystem->mkdir("sequences",0777);
         $file=$pathcourant."/fichier.txt";
         if($filesystem->exists($file))
         {
