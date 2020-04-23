@@ -10,7 +10,7 @@ use App\Repository\SequenceRepository;
 use App\Entity\Axe;
 use App\Entity\Twin;
 use Doctrine\Common\Collections\ArrayCollection;
-
+use Symfony\Component\Filesystem\Filesystem;
 class SequenceController extends AbstractController
 {
         
@@ -21,24 +21,29 @@ class SequenceController extends AbstractController
     ///////
     public function enregistrer(Request $request , EntityManagerInterface $manager)
     {
-        $file = "fichier.txt";
-        if (file_exists($file)) 
+        $filesystem =new Filesystem();
+        $pathcourant=getcwd();
+        $filesystem->mkdir("sequences",0777);
+        $file=$pathcourant."/fichier.txt";
+        if($filesystem->exists($file))
         {
+            //  $filesystem->chmod($file,0755);
             $sequence = file_get_contents($file);
-       
-             
-            $nomSequence = "sequence";
+            //$filesystem->dumpFile($file, $sequence);
+            
+            $nomSequence ="sequence";
             $i = 1;
-            while (file_exists($nomSequence)) 
+            while (file_exists("sequences".DIRECTORY_SEPARATOR.$nomSequence))
             {
-                                                                //tant que le fichier séquence existe
-                $nomSequence = "sequence" . $i;                 //on affecte à la variable nomSequence le nom "sequence" suivie de la variable $i.
-                $i ++;                                          // la variable "$i" s'incrémente de 1 à chaque fois 
+                
+                $nomSequence ="sequence" . $i;
+                $i ++;
             }
-            file_put_contents($nomSequence, $sequence);
+            $filesystem->dumpFile("sequences".DIRECTORY_SEPARATOR.$nomSequence,$sequence);
             //////Enregistrement du fichier dans la bdd///////////////////////
             $sequenceBdd=new Sequence();
-            $url =  $_SERVER['DOCUMENT_ROOT'].$nomSequence;         //url de la séquence enregistrée
+            $url = $pathcourant.DIRECTORY_SEPARATOR."sequences".DIRECTORY_SEPARATOR.$nomSequence;
+            //$url =  $_SERVER['DOCUMENT_ROOT'].$nomSequence;         //url de la séquence enregistrée
             $dateJour=new \DateTime();
             
             $sequenceBdd->setUrl($url);                             
@@ -54,9 +59,10 @@ class SequenceController extends AbstractController
           // 'sequence'=>$sequenceBdd,
           ]);*/
          
-        return $this->redirectToRoute('sequence_afficher', [
+        return $this->render('sequence/enregistrer.html.twig',['nomFichierSequence' => $nomSequence]);
+        /*return $this->redirectToRoute('sequence_afficher', [
             'nomFichierSequence' => $nomSequence
-        ]);
+        ]);*/
     }
 
     /**
@@ -65,7 +71,7 @@ class SequenceController extends AbstractController
      */
     public function afficher($nomFichierSequence)
     {
-        $file = $nomFichierSequence;
+        $file = "sequences".DIRECTORY_SEPARATOR.$nomFichierSequence;
         if (file_exists($file)) 
         {
             $sequence = file_get_contents($file);
@@ -83,7 +89,7 @@ class SequenceController extends AbstractController
     public function selectionner()                          //sélection des séquences pour les afficher et les supprimer    
     {
         $listesFichiers = array();                          //création d'un tableau vide
-        $tab = scandir("../public");                        //Scan du répertoire où est enregistrée la séquence
+        $tab = scandir("../public/sequences");              //Scan du répertoire où est enregistrée la séquence
         for ($i = 0; $i < count($tab); $i ++) 
         {
             if (substr($tab[$i], 0, 8) == "sequence")       //si les 8 premiers caractères du fichier portent le nom "sequence"
@@ -172,13 +178,16 @@ class SequenceController extends AbstractController
      * @Route("/sequence/suppression/{nomFichierSequence}", name="sequence_suppression")
      */
     public function suppressionFichier($nomFichierSequence, EntityManagerInterface $manager, SequenceRepository $repo)
-    {   
-        $url =  $_SERVER['DOCUMENT_ROOT'].$nomFichierSequence;      //url de la séquence enregistrée en base de données
-        unlink($nomFichierSequence);                                //suppression du fichier
+    {
+        $pathcourant=getcwd();
+        $url = $pathcourant.DIRECTORY_SEPARATOR ."sequences".DIRECTORY_SEPARATOR.$nomFichierSequence;
+        //$url =  $_SERVER['DOCUMENT_ROOT'].$nomFichierSequence;      //url de la séquence enregistrée en base de données
+        unlink("sequences".DIRECTORY_SEPARATOR.$nomFichierSequence);                                //suppression du fichier
         $sequence=new Sequence();
         $sequence=$repo->findOneBy(array("url"=>$url));             //recherche dans la base de données l'enregistrement qui a l'url "$url"
         $manager->remove($sequence);
         $manager->flush();
         return $this->redirectToRoute('sequence_selectionner');
     }
+    
 }
