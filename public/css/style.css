@@ -35,7 +35,7 @@
 
 
 body {
-	/* background: url(/img/web.jpg) no-repeat center center fixed;
+	/*background: url(/img/11.jpg) no-repeat center center fixed;
 	background-color: #222222;;
 	background-size: cover;*/
 	background: radial-gradient(circle, rgba(218,241,255,1) 0%, rgba(62,83,104,1) 95%);
@@ -121,7 +121,22 @@ body {
 	padding-bottom: 15px;
 }
 
+.forgot {
+	padding: 5px 0 25px;
+}
+
+.forgot a {
+	color: #daf1ff;
+}
+
+.forgot-title {
+	text-align: center;
+	color: #515151;
+	padding-bottom: 15px;
+}
+
 /*****************************************************************************************************************************/
+
 
 
 /*********************************************************Config Robot*************************************************************/

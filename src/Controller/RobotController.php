@@ -43,7 +43,7 @@ class RobotController extends AbstractController
             //$manager->persist($robot);
             $manager->flush();
 
-            $this->addFlash('success', 'Modification enregistré avec success !');
+            $this->addFlash('success', 'Modification enregistré avec succès !');
 
             return $this->redirectToRoute('robot');
         }

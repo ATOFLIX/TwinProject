@@ -15,7 +15,7 @@
             <div class="modal-content">
 
                 <div class="col-12 user-img">
-                    <img src="img/face.png">
+                    <img src="{{ asset('img/face.png') }}">
                 </div>
                 
                 <div class="col-12 form-input">
@@ -33,10 +33,40 @@
                     </form>
                 </div>
 
-                {# <div class="col-12 forgot">
-                    <a href="#">Mot de passe oublié ?</a>
-                </div> #}
+                <div class="col-12 forgot">
+                    <a type="button" data-toggle="modal" data-target="#forgotPassword">Mot de passe oublié ?</a>
+                </div>
 
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="forgotPassword" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">Récupération du mot de passe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form  action="{{ path('app_forgotten_password') }}" method="post">
+                    <div class="modal-body">
+                        <p style="text-align:center">Veuillez renseigner votre adresse email afin de pouvoir réinitialiser votre mot de passe.</p>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">@</span>
+                            </div>
+                            <label for="inputEmail" class="sr-only">Email</label>    
+                            <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email ..." required autofocus>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Envoyer le mail !</button>
+                    </div>
+                </form>
+                
             </div>
         </div>
     </div>

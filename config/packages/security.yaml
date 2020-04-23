@@ -41,3 +41,4 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: /twin, roles: ROLE_USER }
         - { path: ^/robot, roles: ROLE_USER }
+        - { path: ^/sequence, roles: ROLE_USER }

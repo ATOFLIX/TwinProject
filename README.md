@@ -46,3 +46,8 @@ Quatrième Version de l'interface :
     Page de configuration du robot fanuc.
     Entité 'robot' + Nouveau Controller 'RobotController'.
     Création d'un formulaire Symfony pour la modification ddes données du robot.
+
+Cinquième Version de l'interface :
+    
+    Page de gestion des séquences.
+    Système de mot de passe oublié avec envoie d'un mail pour le réinitialiser.

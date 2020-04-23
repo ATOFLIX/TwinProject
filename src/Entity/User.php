@@ -76,6 +76,20 @@ class User implements UserInterface
      */
     public $confirm_password;
 
+    /**
+     * Le token qui servira lors de l'oubli de mot de passe
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $resetToken;
+
+    /**
+     * Servira pour la durée de validité du token pour le mot de passe oublié
+     * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
+     */
+    private $passwordRequestedAt;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
@@ -167,6 +181,28 @@ class User implements UserInterface
     {
         $this->roles = $roles;
 
+        return $this;
+    }
+
+    public function getResetToken()
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken($resetToken)
+    {
+        $this->resetToken = $resetToken;
+        return $this;
+    }
+
+    public function getPasswordRequestedAt()
+    {
+        return $this->passwordRequestedAt;
+    }
+
+    public function setPasswordRequestedAt($passwordRequestedAt)
+    {
+        $this->passwordRequestedAt = $passwordRequestedAt;
         return $this;
     }
     

@@ -150,19 +150,19 @@ class SequenceController extends AbstractController
      */
     public function traitementFormulaire()                          //Traitement du formulaire pour supprimer et afficher les séquences
     {
-            $sequence = $_POST["selection"];                            //on récupère la séquence que l'on a sélectionné dans le formulaire
-            if (isset($_POST["afficher"]))                              //si on a appuyé sur "afficher"
-            {
-                return $this->redirectToRoute('sequence_afficher', [    // on est redirigé vers la route "sequence_afficher" qui va afficher la séquence que l'on a sélectionnée
-                    "nomFichierSequence" => $sequence
-                ]);
-            }
-            else if (isset($_POST["supprimer"]))                        //sinon si on a appuyé sur "supprimer"
-            {
-                return $this->redirectToRoute('sequence_suppression', [ //on va être redirigé vers la route "sequence_suppression"
-                    "nomFichierSequence" => $sequence
-                ]);
-            }
+        $sequence = $_POST["selection"];                            //on récupère la séquence que l'on a sélectionné dans le formulaire
+        if (isset($_POST["afficher"]))                              //si on a appuyé sur "afficher"
+        {
+            return $this->redirectToRoute('sequence_afficher', [    // on est redirigé vers la route "sequence_afficher" qui va afficher la séquence que l'on a sélectionnée
+                "nomFichierSequence" => $sequence
+            ]);
+        }
+        else if (isset($_POST["supprimer"]))                        //sinon si on a appuyé sur "supprimer"
+        {
+            return $this->redirectToRoute('sequence_suppression', [ //on va être redirigé vers la route "sequence_suppression"
+                "nomFichierSequence" => $sequence
+            ]);
+        }
     }
         
 
