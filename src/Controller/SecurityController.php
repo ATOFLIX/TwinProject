@@ -84,7 +84,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/{token}", name="app_reset_password")
+     * @Route("/reset/{id}/{token}", name="app_reset_password")
      */
     public function resetPassword(User $user, Request $request, string $token, UserPasswordEncoderInterface $passwordEncoder)
     {
