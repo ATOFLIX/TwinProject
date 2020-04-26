@@ -11,59 +11,15 @@ use App\Entity\Axe;
 use App\Entity\Twin;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+
+const DOSSIER_SEQUENCES = "sequences";
 class SequenceController extends AbstractController
 {
         
-    /**
-     *
-     * @Route("/sequence/save", name="sequence_save")                   
-     */
-    ///////
-    public function enregistrer(Request $request , EntityManagerInterface $manager)
-    {
-        $filesystem =new Filesystem();
-        $pathcourant=getcwd();
-        $filesystem->mkdir("sequences",0777);
-        $file=$pathcourant."/fichier.txt";
-        if($filesystem->exists($file))
-        {
-            //  $filesystem->chmod($file,0755);
-            $sequence = file_get_contents($file);
-            //$filesystem->dumpFile($file, $sequence);
-            
-            $nomSequence ="sequence";
-            $i = 1;
-            while (file_exists("sequences".DIRECTORY_SEPARATOR.$nomSequence))
-            {
-                
-                $nomSequence ="sequence" . $i;
-                $i ++;
-            }
-            $filesystem->dumpFile("sequences".DIRECTORY_SEPARATOR.$nomSequence,$sequence);
-            //////Enregistrement du fichier dans la bdd///////////////////////
-            $sequenceBdd=new Sequence();
-            $url = $pathcourant.DIRECTORY_SEPARATOR."sequences".DIRECTORY_SEPARATOR.$nomSequence;
-            //$url =  $_SERVER['DOCUMENT_ROOT'].$nomSequence;         //url de la séquence enregistrée
-            $dateJour=new \DateTime();
-            
-            $sequenceBdd->setUrl($url);                             
-            $sequenceBdd->setDate($dateJour);
-            
-            $manager->persist($sequenceBdd);
-            $manager->flush();
-        }
-        
-        
-          /*return $this->render('sequence/afficher.html.twig', [
-          'controller_name' => 'SequenceController'
-          // 'sequence'=>$sequenceBdd,
-          ]);*/
-         
-        return $this->render('sequence/enregistrer.html.twig',['nomFichierSequence' => $nomSequence]);
-        /*return $this->redirectToRoute('sequence_afficher', [
-            'nomFichierSequence' => $nomSequence
-        ]);*/
-    }
+    
 
     /**
      *
@@ -71,7 +27,7 @@ class SequenceController extends AbstractController
      */
     public function afficher($nomFichierSequence)
     {
-        $file = "sequences".DIRECTORY_SEPARATOR.$nomFichierSequence;
+        $file = DOSSIER_SEQUENCES.DIRECTORY_SEPARATOR.$nomFichierSequence;
         if (file_exists($file)) 
         {
             $sequence = file_get_contents($file);
@@ -89,12 +45,12 @@ class SequenceController extends AbstractController
     public function selectionner()                          //sélection des séquences pour les afficher et les supprimer    
     {
         $listesFichiers = array();                          //création d'un tableau vide
-        $tab = scandir("../public/sequences");              //Scan du répertoire où est enregistrée la séquence
+        $tab = scandir(DOSSIER_SEQUENCES);              //Scan du répertoire où est enregistrée la séquence
         for ($i = 0; $i < count($tab); $i ++) 
         {
-            if (substr($tab[$i], 0, 8) == "sequence")       //si les 8 premiers caractères du fichier portent le nom "sequence"
+            if(substr($tab[$i],0,1)!=".")
             {
-                array_push($listesFichiers, $tab[$i]);      //on insère tous les fichiers commençant par "sequence" dans le tableau
+                array_push($listesFichiers, $tab[$i]); // on insère tous les fichiers commençant par "sequence" dans le tableau
             }
         }
 
@@ -104,51 +60,6 @@ class SequenceController extends AbstractController
         ]);
     }
     
-    /**
-     *
-     * @Route("/sequence/selectionner1", name="sequence_selectionner1")
-     */
-    public function selectionner1()                         //sélection des séquences pour les jouer
-    {
-        $listesFichiers = array();                          //création d'un tableau vide
-        $tab = scandir("../public");                        //Scan du répertoire où est enregistrée la séquence
-        for ($i = 0; $i < count($tab); $i ++)
-        {
-            if (substr($tab[$i], 0, 8) == "sequence")       //si les 8 premiers caractères du fichier portent le nom "sequence"
-            {
-                array_push($listesFichiers, $tab[$i]);      //on insère tous les fichiers commençant par "sequence" dans le tableau
-            }
-        }
-        
-        return $this->render('sequence/formulaire1.html.twig', [        //on est redirigés sur la page "formulaire1.html.twig" pour jouer la séquence
-            'controller_name' => 'SequenceController',
-            'listeFichiers' => $listesFichiers,
-        ]);
-    }
-    
-    
-    /**
-     *
-     * @Route("/sequence/jouer", name="sequence_jouer")
-     */
-    public function jouer()                     
-    {
-        $sequence=$_POST["selection1"];
-        $axe1=new Axe();
-        $axe2=new Axe();
-        $axe3=new Axe();
-        $axe4=new Axe();
-        $axe5=new Axe();
-        $axe6=new Axe();
-        
-       ////en cours, pas terminé/////////////////////////////
-        
-        
-        return $this->render('sequence/formulaire1.html.twig', [
-            'controller_name' => 'SequenceController',
-            'tableau' => $tabTwin,
-        ]);
-    }
 
     /**
      *
@@ -172,6 +83,92 @@ class SequenceController extends AbstractController
     }
         
 
+    
+     /**
+     *
+     * @Route("/sequence/TraitementNom", name="sequence_traitementNom")
+     */
+    public function traitementNomSequence(Request $request, EntityManagerInterface $manager)
+    {
+        $nomSequence="";
+        $filesystem = new Filesystem();
+        $pathcourant = getcwd();
+        $filesystem->mkdir(DOSSIER_SEQUENCES, 0777);
+        
+        $file = $pathcourant . DIRECTORY_SEPARATOR . "fichier.txt";
+        
+        
+        
+        $form=$this->createFormBuilder()->add('nomSequence',TextType::class, ['required'=> false ])
+        ->add('OK',SubmitType::class)->getForm();
+        $form->handleRequest($request);
+        
+        
+        
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $donnees=$form->getData();
+            $nomSequence=$donnees['nomSequence'];
+            if(!$nomSequence)
+            {
+                $nomSequence="sequence";
+            }
+            $tailleSequence=strlen($nomSequence);
+            
+            $nom=substr($nomSequence,0,$tailleSequence);
+            
+            if ($filesystem->exists($file))
+            {
+                $i=1;
+                $sequence = file_get_contents($file);
+                
+                while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence))
+                {
+                    
+                    $nomSequence = $nom. $i;
+                    $i ++;
+                    
+                    
+                    
+                }
+                
+                
+                
+                $filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $sequence);
+                // ////Enregistrement du fichier dans la bdd///////////////////////
+                $sequenceBdd = new Sequence();
+                $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
+                // $url = $_SERVER['DOCUMENT_ROOT'].$nomSequence; //url de la séquence enregistrée
+                $dateJour = new \DateTime();
+                
+                $sequenceBdd->setUrl($url);
+                $sequenceBdd->setDate($dateJour);
+                
+                $manager->persist($sequenceBdd);
+                $manager->flush();
+                
+                
+                return $this->render('sequence/enregistrer.html.twig', [
+                    'controller_name' => 'SequenceController',
+                    'nomSequence'=>$nomSequence,
+                    'form'=>$form->createView(),
+                ]);
+            }
+            
+        }
+        
+        
+        return $this->render('sequence/enregistrer.html.twig', [
+            'controller_name' => 'SequenceController',
+            'form' => $form->createView(),
+            'nomSequence'=>$nomSequence,
+        ]);
+    }   
+        
+        
+        
+        
+        
 
     /**
      *
@@ -180,9 +177,9 @@ class SequenceController extends AbstractController
     public function suppressionFichier($nomFichierSequence, EntityManagerInterface $manager, SequenceRepository $repo)
     {
         $pathcourant=getcwd();
-        $url = $pathcourant.DIRECTORY_SEPARATOR ."sequences".DIRECTORY_SEPARATOR.$nomFichierSequence;
+        $url = $pathcourant.DIRECTORY_SEPARATOR .DOSSIER_SEQUENCES.DIRECTORY_SEPARATOR.$nomFichierSequence;
         //$url =  $_SERVER['DOCUMENT_ROOT'].$nomFichierSequence;      //url de la séquence enregistrée en base de données
-        unlink("sequences".DIRECTORY_SEPARATOR.$nomFichierSequence);                                //suppression du fichier
+        unlink(DOSSIER_SEQUENCES.DIRECTORY_SEPARATOR.$nomFichierSequence);                                //suppression du fichier
         $sequence=new Sequence();
         $sequence=$repo->findOneBy(array("url"=>$url));             //recherche dans la base de données l'enregistrement qui a l'url "$url"
         $manager->remove($sequence);
