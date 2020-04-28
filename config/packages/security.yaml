@@ -21,6 +21,7 @@ security:
             provider: in_database
 
             form_login:
+                csrf_token_generator: security.csrf.token_manager
                 login_path: security_login
                 check_path: security_login
                 default_target_path: robot

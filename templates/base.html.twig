@@ -3,13 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
         
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+            <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
+            
+            <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
+        {% endblock %}
 
     </head>
 
@@ -43,10 +45,10 @@
                         <ul class="nav nav-pills">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Gestion des séquences</a>
-                                    <div class="dropdown-menu" style="">
-                                        <a class="dropdown-item" href="{{path('sequence_save')}}">Enregistrer</a>
-                                        <a class="dropdown-item" href="{{path('sequence_selectionner')}}">Affichage et suppression</a>
-                                    </div>
+                                <div class="dropdown-menu" style="">
+                                    <a class="dropdown-item" href="{{path('sequence_save')}}">Enregistrer</a>
+                                    <a class="dropdown-item" href="{{path('sequence_selectionner')}}">Affichage et suppression</a>
+                                </div>
                             </li>
                         </ul>
                         {% endif %}
@@ -63,8 +65,21 @@
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         {% if app.user %}
-                            <a class="nav-link my-2 my-sm-0" href="{{ path('security_logout') }}">Déconnexion</a>
+                            <ul class="nav nav-pills">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link my-2 my-sm-0 dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Mon compte</a>
+                                    <div class="dropdown-menu dropdown-menu-right" style="">
+                                        <a class="dropdown-item" href="{{path('edit_password')}}">Modifier le mot de passe</a>
+                                        <a class="dropdown-item" href="{{path('security_logout')}}">Déconnexion</a>
+                                    </div>
+                                </li>
+                            </ul>
                         {% endif %}
+
+
+                        {# {% if app.user %}
+                            <a class="nav-link my-2 my-sm-0" href="{{ path('security_logout') }}">Déconnexion</a>
+                        {% endif %} #}
                     </li>
                 </ul>
                 
@@ -90,6 +105,7 @@
         <div class="container">
             {% block body %}{% endblock %}
         </div>
+
         {% block javascripts %}
             <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
             <script src="http://mrdoob.github.com/three.js/build/three.min.js"></script>

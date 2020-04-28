@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\ResetPasswordType;
-use App\Repository\UserRepository;
 use App\Services\Mailer;
+use App\Form\EditPasswordType;
+use App\Form\ResetPasswordType;
+use App\Form\Model\ChangePassword;
 
+use App\Repository\UserRepository;
+use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,11 +29,13 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $utils){
         
+        //Si l'utilisateur est déjà connecté il est renvoyé vers la page de configuration du robot
         if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             return $this->redirectToRoute('robot');
         }
 
         $user = new User();
+
         return $this->render('security/login.html.twig',[
             "lastUsername" => $utils->getLastUsername(),
             "error" => $utils->getLastAuthenticationError()
@@ -41,6 +47,36 @@ class SecurityController extends AbstractController
      */
     public function logout() {}
 
+    /**
+     * @Route("/editPassword", name="edit_password")
+     * @Security("is_granted('ROLE_USER')")
+     */
+    public function editPassword(Request $request, UserPasswordEncoderInterface $passwordEncoder) 
+    {
+        $changePasswordModel = new ChangePassword();
+    	$entityManager = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+
+    	$form = $this->createForm(EditPasswordType::class, $changePasswordModel);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $newEncodedPassword = $passwordEncoder->encodePassword($user, $changePasswordModel->getNewPassword());
+            $user->setPassword($newEncodedPassword);
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre mot de passe a bien été changé !');
+
+            return $this->redirectToRoute('robot');
+
+        } 	
+    	return $this->render('security/edit_password.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+    
     /**
      * @Route("/forgottenPassword", name="app_forgotten_password")
      */
@@ -84,7 +120,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/{token}", name="app_reset_password")
+     * @Route("/reset/{id}/{token}", name="app_reset_password")
      */
     public function resetPassword(User $user, Request $request, string $token, UserPasswordEncoderInterface $passwordEncoder)
     {

@@ -2,18 +2,20 @@
 
 namespace App\Form;
 
-use App\Entity\User;
+use App\Form\Model\ChangePassword;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
-class ResetPasswordType extends AbstractType
+class EditPasswordType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
         $builder
-            ->add('password', PasswordType::class)
+            ->add('oldPassword', PasswordType::class)
+            ->add('newPassword', PasswordType::class)
             ->add('confirm_password', PasswordType::class)
         ;
     }
@@ -21,7 +23,7 @@ class ResetPasswordType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
+            'data_class' => ChangePassword::class,
         ]);
     }
 }

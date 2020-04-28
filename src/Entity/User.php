@@ -4,6 +4,7 @@ namespace App\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -12,11 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(
- * fields = {"email"},
- * message = "L'email que vous avez saisi est déjà utilisé !",
- * fields = {"username"},
- * message = "Ce pseudo est déjà pris !")
+ * @UniqueEntity(fields="email", message="L'email que vous avez saisi est déjà utilisé !")
+ * @UniqueEntity(fields="username", message="Ce pseudo est déjà pris !")
  */
 class User implements UserInterface
 {
@@ -32,7 +30,7 @@ class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=255, nullable=false)
+     * @ORM\Column(name="email", type="string", length=255, nullable=false, unique=true)
      * @Assert\Email()
      */
     private $email;
@@ -40,7 +38,7 @@ class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=255, nullable=false)
+     * @ORM\Column(name="username", type="string", length=255, nullable=false, unique=true)
      */
     private $username;
 
@@ -48,7 +46,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
-     * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire minimum 8 caractères")
+     * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire minimum 8 caractères.")
      */
     private $password;
 
@@ -76,6 +74,7 @@ class User implements UserInterface
      */
     public $confirm_password;
 
+
     /**
      * Le token qui servira lors de l'oubli de mot de passe
      * @var string
@@ -89,6 +88,7 @@ class User implements UserInterface
      * @var \DateTime
      */
     private $passwordRequestedAt;
+
 
     public function __construct()
     {
@@ -140,6 +140,7 @@ class User implements UserInterface
         return $this;
     }
 
+
     public function getNom(): ?string
     {
         return $this->nom;
@@ -167,6 +168,7 @@ class User implements UserInterface
     public function eraseCredentials() {}
 
     public function getSalt() {}
+
 
     public function getRoles(): array
     {

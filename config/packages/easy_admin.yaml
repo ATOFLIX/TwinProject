@@ -47,7 +47,7 @@ easy_admin:
                     - prenom
                     - { property: 'username', label: 'Pseudo' }
                     - email
-                    - { property: 'password', type: 'password', label: 'Mot de passe', type_options: { required: false } }
+                    # - { property: 'password', type: 'password', label: 'Mot de passe', type_options: { required: false } }
                     - { property: 'roles', label: 'Rôles', type: choice, type_options: {expanded: true, multiple: true, choices: {'Utilisateur':'ROLE_USER', 'Administrateur':'ROLE_ADMIN'}} }
 
 
