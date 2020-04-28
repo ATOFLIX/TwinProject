@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+{% block title %}accueil sequence{% endblock %}
+
+{% block body %}
+<h1>Bienvenue sur la page d'accueil des séquences</h1>
+
+
+
+<a href="{{ path('sequence_traitementNom') }}" target="_blank">Enregistrement d'une séquence</a><br>
+<a href="{{ path('sequence_selectionner') }}" target="_blank">Affichage et suppression des séquences </a>
+{% endblock %}

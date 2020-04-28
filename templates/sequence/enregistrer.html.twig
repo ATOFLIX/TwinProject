@@ -3,13 +3,21 @@
 {% block title %}Enregistrement{% endblock %}
 
 {% block body %}
-<h1>1 séquence enregistrée</h1>
 
-<a href="{{ path('sequence_afficher',{'nomFichierSequence':nomFichierSequence}) }}" target="_blank">affichage de la séquence</a> 
 
+<h3>Quel nom voulez-vous donner à la séquence?</h3>
+{{ form_start(form) }}
+
+{{form_row(form.nomSequence,{'attr' :{'placeholder': 'saisissez le nom de la séquence'}}) }}
+
+
+{{ form_end(form) }}
+
+{% if nomSequence %}
+
+<h3>La séquence {{ nomSequence }} a bien été enregistrée </h3>
+<a href="{{ path('sequence_afficher',{'nomFichierSequence':nomSequence}) }}" target="_blank">affichage de la séquence</a>
+{% endif %}
 
 {% endblock %}
-
-
-
 
