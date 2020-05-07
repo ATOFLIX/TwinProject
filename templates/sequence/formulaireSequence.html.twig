@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Sélection fichiers!!
+{% endblock %}
+
+{% block body %}
+<form action="{{ path('sequence_traitementSequence') }}" method="post">
+
+	<div class="container">
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nom séquence</th>
+					<th>Date d'enregistrement</th>
+					<th>Checkbox</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				{%  for une in sequence %}
+				<tr>
+					<td>{{ une.url |split("\\")  | last }}</td>
+					<td>{{ une.date | date('d-m-Y H:i:s')}}</td>
+					<td>
+						<div>
+							<input class="cocher" type="checkbox" name="cocher[]"
+								value="{{ une.url |split("\\")  | last }}">
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+
+			</tbody>
+			<tfoot>
+				<tr>
+					<td><input type="submit" id="afficher" name="afficher"
+						value="afficher" class="btn btn-outline-success" /> <input
+						type="submit" id="supprimer" name="supprimer" value="supprimer"
+						class="btn btn-outline-danger" /> </td>
+					<td class="text-right">Tout cocher</td>
+					<td><input type="checkbox" id="checkAll"></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div
+	
+	
+
+
+</form>
+
+{% endblock %}
+
+{% block javascripts %}
+
+
+<script src="{{ asset('js/sequence/sequence.js') }}">
+	
+</script>
+
+
+{% endblock %}
+
+
+
