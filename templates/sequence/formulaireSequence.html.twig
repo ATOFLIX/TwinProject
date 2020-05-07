@@ -21,12 +21,12 @@ Sélection fichiers!!
 
 				{%  for une in sequence %}
 				<tr>
-					<td>{{ une.url |split("\\")  | last }}</td>
+					<td>{{ une.url |split("/")  | last }}</td>
 					<td>{{ une.date | date('d-m-Y H:i:s')}}</td>
 					<td>
 						<div>
 							<input class="cocher" type="checkbox" name="cocher[]"
-								value="{{ une.url |split("\\")  | last }}">
+								value="{{ une.url |split("/")  | last }}">
 						</div>
 					</td>
 				</tr>
