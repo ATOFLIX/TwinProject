@@ -23,6 +23,19 @@ class SequenceController extends AbstractController
 
     /**
      *
+     * @Route("/sequence/accueil", name="sequence_accueil")
+     */
+    public function accueilSequence()
+    {
+        return $this->render('sequence/accueilSequence.html.twig', [
+            'controller_name' => 'SequenceController'
+        ]);
+    }
+    
+    
+    
+    /**
+     *
      * @Route("/sequence/afficher/{nomFichierSequence}", name="sequence_afficher")
      */
     public function afficher($nomFichierSequence)
