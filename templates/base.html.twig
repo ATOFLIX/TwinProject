@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
-        
+
+                
         {% block stylesheets %}
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
             <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
@@ -45,17 +46,10 @@
                         <ul class="nav nav-pills">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Gestion des séquences</a>
-<<<<<<< HEAD
                                 <div class="dropdown-menu" style="">
-                                    <a class="dropdown-item" href="{{path('sequence_save')}}">Enregistrer</a>
+                                    <a class="dropdown-item" href="{{path('sequence_traitementNom')}}">Enregistrer</a>
                                     <a class="dropdown-item" href="{{path('sequence_selectionner')}}">Affichage et suppression</a>
                                 </div>
-=======
-                                    <div class="dropdown-menu" style="">
-                                        <a class="dropdown-item" href="{{path('sequence_traitementNom')}}">Enregistrer</a>
-                                        <a class="dropdown-item" href="{{path('sequence_selectionner')}}">Affichage et suppression</a>
-                                    </div>
->>>>>>> e00a838532d24b605a258a6f414f66a7f76e0322
                             </li>
                         </ul>
                         {% endif %}

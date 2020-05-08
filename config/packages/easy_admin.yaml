@@ -1,4 +1,5 @@
 easy_admin:
+
     # On définit le nom de l'interface d'administration
     site_name: 'Gestion des utilisateurs'
     # On définit l'affichage de l'utilisateur
@@ -6,10 +7,12 @@ easy_admin:
         display_name: true
         display_avatar: false
     design:
+        assets:
+            css:
+                - 'css/easy_admin.css'
+            
         # Ces lignes définiront notre menu
         menu:
-            - { label: Accueil, route: 'robot', icon: 'home' }
-
             - { label: 'Utilisateurs' }
             - { entity: 'User', label: 'Utilisateurs', icon: 'user' }
     
