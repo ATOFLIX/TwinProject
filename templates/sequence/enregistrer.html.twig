@@ -30,9 +30,7 @@ href="{{ path('sequence_transitionRenommer',{'nomFichierSequence':nomSequence}) 
 
 </form>#}
 
-{% elseif nomSequence and ancienNomSequence is not null %}
-<h3>La séquence {{ ancienNomSequence }} a bien été renommée. </h3>
-<a role="button" class="btn btn-success" href="{{ path('sequence_afficher',{'nomFichierSequence':nomSequence}) }}" target="_blank">affichage de la séquence</a>
+
 
 {% endif %}
 
