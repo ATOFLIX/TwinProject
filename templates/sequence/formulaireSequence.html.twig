@@ -14,19 +14,19 @@ Sélection fichiers!!
 				<tr>
 					<th>Nom séquence</th>
 					<th>Date d'enregistrement</th>
-					<th>Checkbox</th>
+					<th>Sélection</th>
 				</tr>
 			</thead>
 			<tbody>
 
 				{%  for une in sequence %}
 				<tr>
-					<td>{{ une.url |split("/")  | last }}</td>
+					<td>{{ une.url |affichage | last }}</td>
 					<td>{{ une.date | date('d-m-Y H:i:s')}}</td>
 					<td>
 						<div>
 							<input class="cocher" type="checkbox" name="cocher[]"
-								value="{{ une.url |split("/")  | last }}">
+								value="{{ une.url |affichage| last }}">
 						</div>
 					</td>
 				</tr>
@@ -38,7 +38,9 @@ Sélection fichiers!!
 					<td><input type="submit" id="afficher" name="afficher"
 						value="afficher" class="btn btn-outline-success" /> <input
 						type="submit" id="supprimer" name="supprimer" value="supprimer"
-						class="btn btn-outline-danger" /> </td>
+						class="btn btn-outline-danger" /> <input
+						type="submit" id="renommer" name="renommer" value="renommer"
+						class="btn btn-outline-info" /> </td>
 					<td class="text-right">Tout cocher</td>
 					<td><input type="checkbox" id="checkAll"></td>
 				</tr>
