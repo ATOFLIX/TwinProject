@@ -5,9 +5,9 @@
 {% block body %}
 <h1>Affichage de la séquence enregistrée</h1>
 
-{%  set lignes=sequence | split('\n') %}			{# filtre qui ajoute un séparateur à la fin de la ligne #}
+{%  set lignes=sequence |json_decode|join('\r\n')| split(',') %}			{# filtre qui ajoute un séparateur à la fin de la ligne #}
 <table>
-{% for  une in lignes %}
+{% for  une in sequence |json_decode %}
 <tr><td>{{ une }}</td></tr>
 
 {% endfor %}
