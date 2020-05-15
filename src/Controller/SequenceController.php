@@ -249,7 +249,7 @@ class SequenceController extends AbstractController
                 //$obj = json_decode($sequence);
                 //$a=unserialize($sequence);
                 //dump($obj);
-                dump($fluxJson);
+                //dump($fluxJson);
                 while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence.".json")) {
 
                     $nomSequence = $nom . $i;
@@ -279,7 +279,7 @@ class SequenceController extends AbstractController
                 //$taille = strlen($nomFichierSequence);
                 
                 //$nomFichierSequence = substr($nomFichierSequence, 0, -5);
-                dump($nomFichierSequence);
+                //dump($nomFichierSequence);
                 //$filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $sequence);
                 rename(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR .$nomFichierSequence,DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR .$nomSequence);
                 //unlink(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence);
@@ -289,12 +289,15 @@ class SequenceController extends AbstractController
                 $sequenceBdd = $repo->findOneURLByEnd($nomFichierSequence);
                 //dump($sequenceBdd);
                 $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
-                dump($nomSequence);
+                //dump($nomSequence);
                 $sequenceBdd->setUrl($url);
 
                 $manager->persist($sequenceBdd);
                 $manager->flush();
                 //dump($nomFichierSequence);
+                $this->addFlash("success", "La séquence ".$nomFichierSequence. " a été renommée en " . $nomSequence);
+                return $this->redirectToRoute('sequence_selectionnerSequence'
+                    );
             }
 
             /*
