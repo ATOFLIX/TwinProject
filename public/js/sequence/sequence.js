@@ -44,7 +44,15 @@ $(document)
 							.DataTable(
 									{
 								        "language": {
-								            "lengthMenu": "Montrer _MENU_ éléments par page",
+								            "lengthMenu": 'Montrer <select>'+
+								        	'<option value="5">5</option>'+
+								            '<option value="10">10</option>'+
+								            '<option value="25">25</option>'+          
+								            '<option value="40">40</option>'+
+								            '<option value="50">50</option>'+
+								            '<option value="100">100</option>'+
+								            '<option value="-1">tous</option>'+
+								            '</select> éléments par page',
 								            "zeroRecords": "Aucune donnée dans le tableau",
 								            "info": "Affichage de  la page _PAGE_ de _PAGES_",
 								            "infoEmpty": "Affichage de l'élément 0 à 0 sur 0 élément",
