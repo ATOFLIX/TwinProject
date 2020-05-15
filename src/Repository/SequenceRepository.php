@@ -47,4 +47,14 @@ class SequenceRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    public function findOneURLByEnd($value): ?Sequence
+    {
+        return $this->createQueryBuilder('s')
+        ->andWhere('s.url LIKE :val')
+        ->setParameter('val', '%'.$value)
+        ->getQuery()
+        ->getOneOrNullResult()
+        ;
+    }
 }
