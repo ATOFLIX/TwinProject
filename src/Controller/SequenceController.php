@@ -99,12 +99,12 @@ class SequenceController extends AbstractController
             $i = 1;*/
             
             //dump($nom);
-            while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
+            /*while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
                 
                 $nomSequence = $nom . $i;
                 $i ++;
             }
-            $nomSequence = $nomSequence . ".json";
+            $nomSequence = $nomSequence . ".json";*/
             rename(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence, DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence);
             // ////Enregistrement du fichier dans la bdd///////////////////////
             $sequenceBdd = $repo->findOneURLByEnd($nomFichierSequence);
