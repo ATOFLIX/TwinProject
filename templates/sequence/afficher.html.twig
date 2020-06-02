@@ -3,18 +3,33 @@
 {% block title %}Affichage{% endblock %}
 
 {% block body %}
-<h1>Affichage de la séquence enregistrée</h1>
+<h1>Affichage de la séquence "{{ nomSequence }}"</h1>
 
-{%  set lignes=sequence |json_decode|join('\r\n')| split(',') %}			{# filtre qui ajoute un séparateur à la fin de la ligne #}
-<table>
-{% for  une in sequence |json_decode %}
-<tr><td>{{ une }}</td></tr>
+<table class="table table-bordered table-dark">
+  <thead>
+    <tr>
+      <th class="text-center" scope="col">Angle 1</th>
+      <th class="text-center" scope="col">Angle 2</th>
+      <th class="text-center" scope="col">Angle 3</th>
+      <th class="text-center" scope="col">Angle 4</th>
+      <th class="text-center" scope="col">Angle 5</th>
+      <th class="text-center" scope="col">Angle 6</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for  une in sequence |json_decode | chunkTableau %}
+<tr>
+ {%  for deux in une  %} 
 
+ <td class="text-center">{{ deux }}</td> 
+{# }<td class="text-center">{{ une }}</td> #}
+ {% endfor %} 
+</tr>
 {% endfor %}
-
+</tbody>
 </table>
 
-<a href="{{ path('sequence_traitementNom') }}" target="_blank">Enregistrement d'une séquence</a><br>
+<a href="{{ path('sequence_traitement1') }}" target="_blank">Enregistrement d'une séquence</a><br>
 <a href="{{ path('sequence_selectionnerSequence') }}" target="_blank">Affichage et suppression des séquences </a>
 
 {% endblock %}
