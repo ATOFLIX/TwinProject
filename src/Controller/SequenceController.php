@@ -21,7 +21,7 @@ class SequenceController extends AbstractController
 {
     
     
-    private function Recup($nom)
+    private function VerifNom($nom)
     {
         
         if (empty($nom)) {
@@ -87,7 +87,7 @@ class SequenceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $donnees = $form->getData(); // retourne les données du formulaire dans un tableau
             $nom=$donnees['nom'];
-            $nomSequence=$this->Recup($nom);
+            $nomSequence=$this->VerifNom($nom);
             //$nom = $donnees['nom'];
             /*if (empty($nom)) {
                 $nom = "sequence";
@@ -151,7 +151,7 @@ class SequenceController extends AbstractController
             
             $nomSequence = $donnees['nom'];
             $flux = $donnees['data'];
-            $nomSequence=$this->Recup($nomSequence);
+            $nomSequence=$this->VerifNom($nomSequence);
             $fluxJson=$this->fluxJson($flux);
             //$nom=$this->Recup1($nom);
             
