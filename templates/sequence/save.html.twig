@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Enregistrement
+{% endblock %}
+
+{%  block javascripts %}
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script>
+var seq=[];
+	
+function enregistrer(){			
+		var socket=io.connect('http://localhost:8080/');
+		
+		socket.on("angle2", function (texte){
+		//console.log(texte);
+		seq.push(texte);
+		console.log(seq);
+		});	
+		return false;	
+	}
+//https://stackoverflow.com/questions/4738595/how-do-i-delay-a-function-call-for-5-seconds
+function envoyer(){
+	$("#data").attr("value",seq);	
+	$("#formulaire").submit();
+	return false;
+	
+}
+
+
+
+</script>
+{%  endblock %}
+{% block body %}
+
+<h3>Quel nom voulez-vous donner à la séquence?</h3>
+{#<form action="{{ path('sequence_traitement') }}" method="get" id="formulaire" name="formulaire">
+	<div class="form-group">
+		<!-- pour regrouper plusieurs contrôles et les espacer-->
+		<label for="sequence">NOM DE LA SEQUENCE</label> 
+		<input type="text"
+			id="sequence" class="form-control" name="nomsequence" placeholder="nom de la séquence"  />
+		<input type="hidden" name="data" id="data"  />
+	</div>
+
+	<div class="row justify-content-end">
+		<button type="button" onclick="enregistrer();">Début enregistrement</button>
+		<button type="button" onclick="setTimeout(function(){envoyer();},5000);">Fin enregistrement</button>
+	</div>
+</form>#}
+
+{{ form_start(form,{'attr' : {'id': 'formulaire'}} ) }}
+
+{{form_row(form.nom,{'attr' :{'placeholder': 'saisissez le nom de la séquence'}}) }}
+{{form_row(form.data,   {'id': 'data'} ) }}
+
+<input type='button' class='btn btn-outline-success' id='debut' value="Debut enregistrement" onclick="enregistrer();"/>
+<input type='button' class='btn btn-outline-danger' id='fin' value="Fin enregistrement" onclick="setTimeout(function(){envoyer();},5000);"/>
+{{ form_end(form) }}
+
+
+
+{% endblock %}
