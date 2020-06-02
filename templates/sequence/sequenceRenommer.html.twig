@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Renommage{% endblock %}
+
+{% block body %}
+
+
+<h3>Comment voulez vous renommer la séquence?</h3>
+{{ form_start(form) }}
+
+{{form_row(form.nom) }}
+
+
+{{ form_end(form) }}
+
+{% endblock %}
