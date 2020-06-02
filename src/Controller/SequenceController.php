@@ -7,36 +7,265 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Sequence;
 use App\Repository\SequenceRepository;
-use App\Entity\Axe;
-use App\Entity\Twin;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ResetType;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\Form\FormTypeInterface;
 
 const DOSSIER_SEQUENCES = "sequences";
 
 class SequenceController extends AbstractController
 {
-
-    public function extractDiv($fichier)
+    
+    
+    private function Recup($nom)
     {
-        $sequence = file_get_contents($fichier);
-        $crawler = new Crawler($sequence);
-        $flux=$crawler->filterXpath('//div[@id="sequence"]')->text();
-        $tableau=explode(" ",$flux);
         
-        return $tableau;
+        if (empty($nom)) {
+            $nom = "sequence";
+        }
+        
+        $nom = str_replace(' ', '', $nom);
+        $tailleSequence = strlen($nom);
+        $nomSequence = substr($nom, 0, $tailleSequence);
+        
+        $i = 1;
+        
+        while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
+            
+            $nomSequence = $nom . $i;
+            ++$i;
+        }
+        $nomSequence = $nomSequence . ".json";
+        
+        return $nomSequence;
     }
     
     
+    private function fluxJson($nom)
+    {
+        $nom1=explode(",", $nom);
+        //$tab1=array_chunk($nom, 6);
+        return json_encode($nom1);
+        
+    }
+    
+    
+    
+    
+    /**
+     *
+     * @Route("/sequence/save/", name="sequence_save")
+     */
+    public function SequenceSave()
+    {
+        return $this->render('sequence/save.html.twig', [
+            'controller_name' => 'SequenceController'
+        ]);
+    }
+    
+    /**
+     *
+     * @Route("/sequence/rename/{nomFichierSequence}", name="sequence_rename")
+     */
+    public function rename($nomFichierSequence, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
+    {
+        $pathcourant = getcwd();
+        // création du formulaire avec les différents champs leurs types, leurs contraintes et attributs , et le submit
+        $form = $this->createFormBuilder()
+        ->add('nom', TextType::class, [
+            'required' => false,
+            'data' => substr($nomFichierSequence, 0, - 5)
+        ])
+        ->add('Valider', SubmitType::class)
+        ->getForm();
+        // on demande au formulaire d'analyser les infos de la requête et de récupérer les saisies en cas de submit
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $donnees = $form->getData(); // retourne les données du formulaire dans un tableau
+            $nom=$donnees['nom'];
+            $nomSequence=$this->Recup($nom);
+            //$nom = $donnees['nom'];
+            /*if (empty($nom)) {
+                $nom = "sequence";
+            }
+            $nom = str_replace(' ', '', $nom);
+            $tailleSequence = strlen($nom);
+            $nom = substr($nom, 0, $tailleSequence);
+            
+            $i = 1;*/
+            
+            //dump($nom);
+            while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
+                
+                $nomSequence = $nom . $i;
+                $i ++;
+            }
+            $nomSequence = $nomSequence . ".json";
+            rename(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence, DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence);
+            // ////Enregistrement du fichier dans la bdd///////////////////////
+            $sequenceBdd = $repo->findOneURLByEnd($nomFichierSequence);
+            // dump($sequenceBdd);
+            $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
+            // dump($nomSequence);
+            $sequenceBdd->setUrl($url);
+            
+            $manager->persist($sequenceBdd);
+            $manager->flush();
+            $this->addFlash("success", "La séquence " . $nomFichierSequence . " a été renommée en " . $nomSequence);
+            return $this->redirectToRoute('sequence_selectionnerSequence');
+        }
+        return $this->render('sequence/sequenceRenommer.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+    
+    
+    /**
+     *
+     * @Route("/sequence/traitement1/{nomFichierSequence}", name="sequence_traitement1")
+     */
+    public function script1($nomFichierSequence=null, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
+    {
+        //$nomSequence = $nomFichierSequence;
+        $filesystem = new Filesystem();
+        $pathcourant = getcwd();
+        $filesystem->mkdir(DOSSIER_SEQUENCES, 0777);
+        // création du formulaire avec les différents champs leurs types, leurs contraintes et attributs , et le submit
+        $form = $this->createFormBuilder()
+        ->add('nom', TextType::class, [
+            'required' => false,
+            //'data', HiddenType::class
+        ]
+            
+           )
+        ->add('data', HiddenType::class)
+        ->getForm();
+        // on demande au formulaire d'analyser les infos de la requête et de récupérer les saisies en cas de submit
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $donnees = $form->getData(); // retourne les données du formulaire dans un tableau
+            
+            $nomSequence = $donnees['nom'];
+            $flux = $donnees['data'];
+            $nomSequence=$this->Recup($nomSequence);
+            $fluxJson=$this->fluxJson($flux);
+            //$nom=$this->Recup1($nom);
+            
+            /*if (empty($nomSequence)) {
+                $nomSequence = "sequence";
+            }
+            
+            $nomSequence = str_replace(' ', '', $nomSequence);
+            $tailleSequence = strlen($nomSequence);
+            $nom = substr($nomSequence, 0, $tailleSequence);
+            
+            $i = 1;
+            
+            $flux = explode(",", $flux);
+            $tab1=array_chunk($flux, 6);
+            $fluxJson = json_encode($tab1);
+            //dump($nomSequence);
+            while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
+                
+                $nomSequence = $nom . $i;
+                $i ++;
+            }
+            $nomSequence = $nomSequence . ".json";*/
+            $filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $fluxJson);
+            // ////Enregistrement du fichier dans la bdd///////////////////////
+            $sequenceBdd = new Sequence();
+            //$sequenceBdd = $repo->findOneURLByEnd($nomFichierSequence);
+            // dump($sequenceBdd);
+            $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
+            // dump($nomSequence);
+            date_default_timezone_set('Europe/Paris');
+            $dateJour = new \DateTime();
+            $sequenceBdd->setUrl($url);
+            //dump($dateJour);
+            
+            $sequenceBdd->setDate($dateJour);
+            $manager->persist($sequenceBdd);
+            $manager->flush();
+            $this->addFlash("success", "La séquence " . " \"".$nomSequence. "\"  a bien été enregistrée");
+            return $this->redirectToRoute('sequence_selectionnerSequence');
+           
+        }
+        return $this->render('sequence/save.html.twig', [
+            //'controller_name' => 'SequenceController',
+            'form' => $form->createView(),
+            
+        ]);
+    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     *
+     * @Route("/sequence/traitement/{nomFichierSequence}", name="sequence_traitement")
+     */
+    /*public function script($nomFichierSequence = null, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
+    {
+        // $nomSequence=$nomFichierSequence;
+        if (isset($_GET['data'])) {
+            $nomSequence = $_GET['nomsequence'];
+            
+            $flux = $_GET['data'];
+            // dump($flux);
+            
+            if (empty($nomSequence)) {
+                $nomSequence = "sequence";
+            }
+            // $nomSequence = $nomFichierSequence;
+            $filesystem = new Filesystem();
+            $pathcourant = getcwd();
+            
+            $filesystem->mkdir(DOSSIER_SEQUENCES, 0777);
+            $nomSequence = str_replace(' ', '', $nomSequence);
+            $tailleSequence = strlen($nomSequence);
+            $nom = substr($nomSequence, 0, $tailleSequence);
+            
+            $i = 1;
+            
+            $flux = explode(",", $flux);
+            $fluxJson = json_encode($flux);
+            // dump($fluxJson);
+            while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
+                
+                $nomSequence = $nom . $i;
+                $i ++;
+            }
+            
+            $nomSequence = $nomSequence . ".json";
+            
+            $filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $fluxJson);
+            
+            // ////Enregistrement du fichier dans la bdd///////////////////////
+            $sequenceBdd = new Sequence();
+            $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
+            // $url = $_SERVER['DOCUMENT_ROOT'].$nomSequence; //url de la séquence enregistrée
+            $dateJour = new \DateTime();
+            dump($dateJour);
+            $sequenceBdd->setUrl($url);
+            $sequenceBdd->setDate($dateJour);
+            
+            $manager->persist($sequenceBdd);
+            $manager->flush();
+            $this->addFlash("success", "La séquence " . $nomSequence . " a bien été enregistrée");
+            return $this->redirectToRoute('sequence_selectionnerSequence');
+        }
+        return $this->redirectToRoute('sequence_selectionnerSequence');
+    }*/
     
     /**
      *
@@ -48,7 +277,7 @@ class SequenceController extends AbstractController
             'controller_name' => 'SequenceController'
         ]);
     }
-
+    
     /**
      *
      * @Route("/sequence/afficher/{nomFichierSequence}", name="sequence_afficher")
@@ -60,34 +289,15 @@ class SequenceController extends AbstractController
         $file = DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence;
         if (file_exists($file)) {
             $sequence = file_get_contents($file);
+            //dd($sequence);
         }
         return $this->render('sequence/afficher.html.twig', [
             'controller_name' => 'SequenceController',
-            'sequence' => $sequence
+            'sequence' => $sequence,
+            'nomSequence'=>$nomFichierSequence
         ]);
     }
-
-    /**
-     *
-     * @Route("/sequence/selectionner", name="sequence_selectionner")
-     */
-    /*
-     * public function selectionner() // sélection des séquences pour les afficher et les supprimer
-     * {
-     * $listesFichiers = array(); // création d'un tableau vide
-     * $tab = scandir(DOSSIER_SEQUENCES); // Scan du répertoire où est enregistrée la séquence
-     * for ($i = 0; $i < count($tab); $i ++) {
-     * if (substr($tab[$i], 0, 1) != ".") {
-     * array_push($listesFichiers, $tab[$i]);
-     * }
-     * }
-     *
-     * return $this->render('sequence/formulaire.html.twig', [ // Renvoie vers la page "formulaire.html.twig"
-     * 'controller_name' => 'SequenceController',
-     * 'listeFichiers' => $listesFichiers
-     * ]);
-     * }
-     */
+    
     /**
      *
      * @Route("/sequence/selectionnerSequence", name="sequence_selectionnerSequence")
@@ -95,13 +305,13 @@ class SequenceController extends AbstractController
     public function selectionnerSequence(SequenceRepository $repo)
     {
         $sequence = $repo->findAll();
-
+        
         return $this->render('sequence/formulaireSequence.html.twig', [
             'controller_name' => 'SequenceController',
             'sequence' => $sequence
         ]);
     }
-
+    
     /**
      *
      * @Route("/sequence/TraitementSequence", name="sequence_traitementSequence")
@@ -112,7 +322,7 @@ class SequenceController extends AbstractController
             // if (isset($_POST["cocher"]) ) // si on a appuyé sur "afficher"
             // {
             foreach ($_POST['cocher'] as $sequence) {
-
+                
                 return $this->redirectToRoute('sequence_afficher', [ // on est redirigé vers la route "sequence_afficher" qui va afficher la séquence que l'on a sélectionnée
                     "nomFichierSequence" => $sequence
                 ]);
@@ -122,8 +332,8 @@ class SequenceController extends AbstractController
             // if (isset($_POST["cocher"]) ) // si on a appuyé sur "afficher"
             // {
             foreach ($_POST['cocher'] as $sequence) {
-
-                return $this->redirectToRoute('sequence_traitementNom', [ // on est redirigé vers la route "sequence_afficher" qui va afficher la séquence que l'on a sélectionnée
+                
+                return $this->redirectToRoute('sequence_rename', [
                     "nomFichierSequence" => $sequence
                 ]);
             }
@@ -137,221 +347,8 @@ class SequenceController extends AbstractController
             }
         }
     }
-
-    /**
-     *
-     * @Route("/sequence/Traitement", name="sequence_traitement")
-     */
-    /*
-     * public function traitementFormulaire() // Traitement du formulaire pour supprimer et afficher les séquences
-     * {
-     * $sequence = $_POST["selection"]; // on récupère la séquence que l'on a sélectionné dans le formulaire
-     * if (isset($_POST["afficher"])) // si on a appuyé sur "afficher"
-     * {
-     * return $this->redirectToRoute('sequence_afficher', [ // on est redirigé vers la route "sequence_afficher" qui va afficher la séquence que l'on a sélectionnée
-     * "nomFichierSequence" => $sequence
-     * ]);
-     * } else if (isset($_POST["supprimer"])) // sinon si on a appuyé sur "supprimer"
-     * {
-     * return $this->redirectToRoute('sequence_suppression', [ // on va être redirigé vers la route "sequence_suppression"
-     * "nomFichierSequence" => $sequence
-     * ]);
-     * } else if (isset($_POST["renommer"])) {
-     * return $this->redirectToRoute('sequence_traitementNom', [
-     * "nomFichierSequence" => $sequence
-     * ]);
-     * }
-     * }
-     */
-
-    /**
-     *
-     * @Route("/sequence/TraitementRenommer/{nomFichierSequence}", name="sequence_traitementRenommer")
-     */
-    public function traitementRenommer($nomFichierSequence, EntityManagerInterface $manager, SequenceRepository $repo)
-    {
-        $nomSequence = $manager->refresh($nomFichierSequence);
-
-        return $this->redirectToRoute('sequence_traitementNom', [
-            "nomFichierSequence" => $nomSequence
-        ]);
-
-        return $this->render('sequence/enregistrer.html.twig', [
-            'controller_name' => 'SequenceController'
-        ]);
-    }
-
-    /**
-     *
-     * @Route("/sequence/TransitionRenommer/{nomFichierSequence}", name="sequence_transitionRenommer")
-     */
-    public function transitionRenommer($nomFichierSequence, EntityManagerInterface $manager, SequenceRepository $repo)
-    {
-        // $nomSequence = $manager->refresh($nomFichierSequence);
-        if (isset($_POST["oui"])) {
-
-            return $this->redirectToRoute('sequence_traitementRenommer', [
-                "nomFichierSequence" => $nomSequence
-            ]);
-        } else if (isset($_POST["non"])) {
-            return $this->render('sequence/enregistrer.html.twig', [
-                'controller_name' => 'SequenceController'
-            ]);
-        }
-    }
-
-    /**
-     *
-     * @Route("/sequence/TraitementNom/{nomFichierSequence}", name="sequence_traitementNom")
-     */
-    public function traitementNomSequence($nomFichierSequence = null, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
-    {
-        $nomSequence = $nomFichierSequence;
-        //dump($nomFichierSequence);
-        $filesystem = new Filesystem();
-        $pathcourant = getcwd();
-        $filesystem->mkdir(DOSSIER_SEQUENCES, 0777);
-
-        $file = $pathcourant . DIRECTORY_SEPARATOR . "sequence.html";
-        
-        
-        //$crawler = new Crawler($html);
-        
-        $form = $this->createFormBuilder()
-            ->add('nomSequence', TextType::class, [
-            'required' => false,
-            'data' => substr($nomFichierSequence, 0, -5)
-        ])
-            ->add('OK', SubmitType::class)
-            ->getForm();
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $donnees = $form->getData();
-            $nomSequence = $donnees['nomSequence'];
-            // $nomSequence=trim($nomSequence);
-            $nomSequence = str_replace(' ', '', $nomSequence);
-            if (! $nomSequence) {
-                $nomSequence = "sequence";
-                
-            }
-            
-            
-            $tailleSequence = strlen($nomSequence);
-
-            $nom = substr($nomSequence, 0, $tailleSequence);
-
-            if ($filesystem->exists($file)) {
-                $i = 1;
-                //$sequence = file_get_contents($file);
-                $flux=$this->extractDiv($file);
-                $fluxJson=json_encode($flux);
-                //$obj = json_decode($sequence);
-                //$a=unserialize($sequence);
-                //dump($obj);
-                //dump($fluxJson);
-                while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence.".json")) {
-
-                    $nomSequence = $nom . $i;
-                    $i ++;
-                }
-            }
-            $nomSequenceSansExtension=$nomSequence;
-            $nomSequence=$nomSequence.".json";
-            
-            if (! $nomFichierSequence) {
-                $filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $fluxJson);
-
-                // ////Enregistrement du fichier dans la bdd///////////////////////
-                $sequenceBdd = new Sequence();
-                $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
-                // $url = $_SERVER['DOCUMENT_ROOT'].$nomSequence; //url de la séquence enregistrée
-                $dateJour = new \DateTime();
-
-                $sequenceBdd->setUrl($url);
-                $sequenceBdd->setDate($dateJour);
-
-                $manager->persist($sequenceBdd);
-                $manager->flush();
-                //dump($nomSequence);
-            } 
-            else {
-                //$taille = strlen($nomFichierSequence);
-                
-                //$nomFichierSequence = substr($nomFichierSequence, 0, -5);
-                //dump($nomFichierSequence);
-                //$filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $sequence);
-                rename(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR .$nomFichierSequence,DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR .$nomSequence);
-                //unlink(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence);
-                //dump($nomSequence);
-                
-                // ////Enregistrement du fichier dans la bdd///////////////////////
-                $sequenceBdd = $repo->findOneURLByEnd($nomFichierSequence);
-                //dump($sequenceBdd);
-                $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
-                //dump($nomSequence);
-                $sequenceBdd->setUrl($url);
-
-                $manager->persist($sequenceBdd);
-                $manager->flush();
-                //dump($nomFichierSequence);
-                $this->addFlash("success", "La séquence ".$nomFichierSequence. " a été renommée en " . $nomSequence);
-                return $this->redirectToRoute('sequence_selectionnerSequence'
-                    );
-            }
-
-            /*
-             * return $this->render('sequence/enregistrer.html.twig', [
-             * 'controller_name' => 'SequenceController',
-             * 'nomSequence' => $nomSequence,
-             * 'form' => $form->createView()
-             * ]);
-             */
-        }
-
-        return $this->render('sequence/enregistrer.html.twig', [
-            'controller_name' => 'SequenceController',
-            'form' => $form->createView(),
-            'nomSequence' => $nomSequence,
-            'ancienNomSequence'=>$nomFichierSequence
-        ]);
-    }
-
-    /**
-     *
-     * @Route("/sequence/selectionNom", name="sequence_selectionNom")
-     */
-    /*
-     * public function selectionSequence(Request $request, EntityManagerInterface $manager, SequenceRepository $repo)
-     * {
-     * //$filesystem = new Filesystem();
-     *
-     * $form=$this->createFormBuilder()->add('selection',TextType::class, ['required'=> false ])
-     * ->add('afficher',SubmitType::class)
-     * ->add('supprimer',SubmitType::class)
-     * ->add('annuler',ResetType::class)
-     * ->getForm();
-     * $form->handleRequest($request);
-     *
-     * $sequence=$repo->findAll();
-     *
-     * if($form->isSubmitted() && $form->isValid())
-     * {
-     * return $this->render('sequence/formulaire.html.twig', [
-     * 'controller_name' => 'SequenceController',
-     * 'form' => $form->createView(),
-     * 'nomSequence'=>$Sequence,
-     * ]);
-     * }
-     *
-     * return $this->render('sequence/formulaire.html.twig', [
-     * 'controller_name' => 'SequenceController',
-     * 'form' => $form->createView(),
-     * 'nomSequence'=>$Sequence,
-     * ]);
-     * }
-     */
-
+    
+    
     /**
      *
      * @Route("/sequence/suppression/{nomFichierSequence}", name="sequence_suppression")
@@ -368,6 +365,7 @@ class SequenceController extends AbstractController
         )); // recherche dans la base de données l'enregistrement qui a l'url "$url"
         $manager->remove($sequence);
         $manager->flush();
+        $this->addFlash("success", "La séquence " . $nomFichierSequence . " a bien été supprimée");
         return $this->redirectToRoute('sequence_selectionnerSequence');
     }
 }
