@@ -42,7 +42,8 @@ $(document)
 							});
 					$(".table")
 							.DataTable(
-									{
+								{
+									"order": [[ 0, "desc" ]],
 								        "language": {
 								            "lengthMenu": 'Montrer <select>'+
 								        	'<option value="5">5</option>'+
