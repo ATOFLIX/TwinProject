@@ -115,7 +115,7 @@ class SequenceController extends AbstractController
             
             $manager->persist($sequenceBdd);
             $manager->flush();
-            $this->addFlash("success", "La séquence " . $nomFichierSequence . " a été renommée en " . $nomSequence);
+            $this->addFlash("success", "La séquence " . " \"".$nomFichierSequence. "\" a été renommée en " . " \"".$nomSequence. "\"");
             return $this->redirectToRoute('sequence_selectionnerSequence');
         }
         return $this->render('sequence/sequenceRenommer.html.twig', [
@@ -365,7 +365,7 @@ class SequenceController extends AbstractController
         )); // recherche dans la base de données l'enregistrement qui a l'url "$url"
         $manager->remove($sequence);
         $manager->flush();
-        $this->addFlash("success", "La séquence " . $nomFichierSequence . " a bien été supprimée");
+        $this->addFlash("success", "La séquence " . " \"".$nomFichierSequence. "\" a bien été supprimée");
         return $this->redirectToRoute('sequence_selectionnerSequence');
     }
 }
