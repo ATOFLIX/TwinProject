@@ -7,26 +7,10 @@ Enregistrement
 {%  block javascripts %}
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
-<script>
-var seq=[];
 	
-function enregistrer(){			
-		var socket=io.connect('http://localhost:8080/');
-		
-		socket.on("angle2", function (texte){
-		//console.log(texte);
-		seq.push(texte);
-		console.log(seq);
-		});	
-		return false;	
-	}
-//https://stackoverflow.com/questions/4738595/how-do-i-delay-a-function-call-for-5-seconds
-function envoyer(){
-	$("#data").attr("value",seq);	
-	$("#formulaire").submit();
-	return false;
-	
-}
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ <script src="{{asset('js/sequence/enregistrer_sequence.js')}}" ></script>
+
 
 
 
@@ -55,10 +39,12 @@ function envoyer(){
 {{form_row(form.nom,{'attr' :{'placeholder': 'saisissez le nom de la séquence'}}) }}
 {{form_row(form.data,   {'id': 'data'} ) }}
 
-<input type='button' class='btn btn-outline-success' id='debut' value="Debut enregistrement" onclick="enregistrer();"/>
-<input type='button' class='btn btn-outline-danger' id='fin' value="Fin enregistrement" onclick="setTimeout(function(){envoyer();},5000);"/>
+<input type='button' class='btn btn-outline-success' id='debut' value="Debut enregistrement"/>
+<input type='button' class='btn btn-outline-danger' id='fin' value="Fin enregistrement" />
 {{ form_end(form) }}
+<br/>
 
+<div id="progressbar"><div class="message" style="text-align:center;left:0;right:0;position:absolute;z-index:10; opacity:0">Séquence en cours d'enregistrement</div></div>
 
 
 {% endblock %}
