@@ -43,7 +43,7 @@ $(document)
 					$(".table")
 							.DataTable(
 								{
-									"order": [[ 0, "desc" ]],
+									"order": [[ 1, "desc" ]],
 								        "language": {
 								            "lengthMenu": 'Montrer <select>'+
 								        	'<option value="5">5</option>'+
