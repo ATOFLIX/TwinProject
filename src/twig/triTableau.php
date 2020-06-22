@@ -17,7 +17,7 @@ class triTableau extends AbstractExtension
     
     public function triFilter($content)
     {
-        natsort($content);
+        natsort($content); //https://www.php.net/manual/fr/function.natsort.php : trie
         return $content;
     }
 
