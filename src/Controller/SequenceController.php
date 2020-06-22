@@ -4,22 +4,29 @@ namespace App\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+//use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Sequence;
 use App\Repository\SequenceRepository;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
-use Symfony\Component\Form\SubmitButton;
-use Symfony\Component\Form\FormTypeInterface;
 
-const DOSSIER_SEQUENCES = "sequences";
+
+const DOSSIER_SEQUENCES = "sequences";  //Déclaration d'une constante
 
 class SequenceController extends AbstractController
 {
-    
+    /**
+     *
+     * @Route("accueil", name="sequence_accueil")
+     */
+    public function accueilSequence()
+    {
+        return $this->render('sequence/accueilSequence.html.twig', [
+            'controller_name' => 'SequenceController'
+        ]);
+    }
     
     private function VerifNom($nom)
     {
@@ -28,9 +35,9 @@ class SequenceController extends AbstractController
             $nom = "sequence";
         }
         
-        $nom = str_replace(' ', '', $nom);
-        $tailleSequence = strlen($nom);
-        $nomSequence = substr($nom, 0, $tailleSequence);
+        $nom = str_replace(' ', '', $nom); //https://www.php.net/manual/fr/function.str-replace.php : permet de remplacer une valeur par une autre
+        $tailleSequence = strlen($nom);//https://www.php.net/manual/fr/function.strlen.php : calcule la taille de la chaine $nom
+        $nomSequence = substr($nom, 0, $tailleSequence);//https://www.php.net/manual/fr/function.substr.php : retourne la partie souhaitée de la chaine $nom
         
         $i = 1;
         
@@ -47,38 +54,51 @@ class SequenceController extends AbstractController
     
     private function fluxJson($nom)
     {
-        $nom1=explode(",", $nom);
-        //$tab1=array_chunk($nom, 6);
-        return json_encode($nom1);
+        $nom1=explode(",", $nom);   //https://www.php.net/manual/fr/function.explode.php : convertit la chaine $nom en tableau avec comme séparateur la virgule
+        $tab=[];
+        
+        for($j=0;$j<count($nom1);$j=$j+6)
+        {
+            for($i=0;$i<6;$i++)
+            {
+                
+                array_push($tab,array("Angle".($i+1) => $nom1[$j+$i])); //https://www.php.net/manual/fr/function.array-push.php : empile les valeurs d'angles a la fin du tableau $tab
+                //array_push($tab,array("Angle".($i+1) => $nom1[$j+$i]));
+            }
+            
+        }
+        
+        $tab1=array_chunk($tab, 6);     //https://www.php.net/manual/fr/function.array-chunk.php : sépare le tableau $tab en plusieurs tableaux ayant chacun 6 valeurs
+        return json_encode($tab1);
         
     }
     
     
     
-    
+   
     /**
      *
      * @Route("/sequence/save/", name="sequence_save")
      */
-    public function SequenceSave()
+    /*public function SequenceSave()
     {
         return $this->render('sequence/save.html.twig', [
             'controller_name' => 'SequenceController'
         ]);
     }
-    
+    */
     /**
      *
      * @Route("/sequence/rename/{nomFichierSequence}", name="sequence_rename")
      */
     public function rename($nomFichierSequence, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
     {
-        $pathcourant = getcwd();
+        $pathcourant = getcwd();    //https://www.php.net/manual/fr/function.getcwd.php : Retourne le dossier de travail courant
         // création du formulaire avec les différents champs leurs types, leurs contraintes et attributs , et le submit
-        $form = $this->createFormBuilder()
+        $form = $this->createFormBuilder()      // création du formulaire
         ->add('nom', TextType::class, [
             'required' => false,
-            'data' => substr($nomFichierSequence, 0, - 5)
+            'data' => substr($nomFichierSequence, 0, - 5) //https://www.php.net/manual/fr/function.substr.php : on retourne la partie voulue de la chaine $nomFichierSequence
         ])
         ->add('Valider', SubmitType::class)
         ->getForm();
@@ -86,32 +106,16 @@ class SequenceController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $donnees = $form->getData(); // retourne les données du formulaire dans un tableau
-            $nom=$donnees['nom'];
-            $nomSequence=$this->VerifNom($nom);
-            //$nom = $donnees['nom'];
-            /*if (empty($nom)) {
-                $nom = "sequence";
-            }
-            $nom = str_replace(' ', '', $nom);
-            $tailleSequence = strlen($nom);
-            $nom = substr($nom, 0, $tailleSequence);
+            $nom=$donnees['nom'];// Récupère les données du champ 'nom'
+            $nomSequence=$this->VerifNom($nom);// appelle la fonction VerifNom()
             
-            $i = 1;*/
-            
-            //dump($nom);
-            /*while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
-                
-                $nomSequence = $nom . $i;
-                $i ++;
-            }
-            $nomSequence = $nomSequence . ".json";*/
-            rename(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence, DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence);
+            rename(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence, DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence); //https://www.php.net/manual/fr/function.rename.php : permet de renommer le fichier $nomFichierSequence en $nomSequence
             // ////Enregistrement du fichier dans la bdd///////////////////////
             $sequenceBdd = $repo->findOneURLByEnd($nomFichierSequence);
-            // dump($sequenceBdd);
-            $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
-            // dump($nomSequence);
-            $sequenceBdd->setUrl($url);
+            
+            $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence; //l'url du fichier
+            
+            $sequenceBdd->setUrl($url); //envoie de l'url dans la table "sequence"
             
             $manager->persist($sequenceBdd);
             $manager->flush();
@@ -126,19 +130,19 @@ class SequenceController extends AbstractController
     
     /**
      *
-     * @Route("/sequence/traitement1/{nomFichierSequence}", name="sequence_traitement1")
+     * @Route("/sequence/enregistrerSequence/{nomFichierSequence}", name="sequence_enregistrerSequence")
      */
-    public function script1($nomFichierSequence=null, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
+    public function enregistrer($nomFichierSequence=null, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
     {
         //$nomSequence = $nomFichierSequence;
-        $filesystem = new Filesystem();
-        $pathcourant = getcwd();
-        $filesystem->mkdir(DOSSIER_SEQUENCES, 0777);
+        $filesystem = new Filesystem(); //https://symfony.com/doc/current/components/filesystem.html : instanciation d'un nouvel objet Filesystem
+        $pathcourant = getcwd();    //https://www.php.net/manual/fr/function.getcwd.php : Retourne le dossier de travail courant
+        $filesystem->mkdir(DOSSIER_SEQUENCES, 0777);    //création du répertoire "sequences" dans public si il n'est pas déjà créé.
         // création du formulaire avec les différents champs leurs types, leurs contraintes et attributs , et le submit
-        $form = $this->createFormBuilder()
+        $form = $this->createFormBuilder() // création du formulaire
         ->add('nom', TextType::class, [
             'required' => false,
-            //'data', HiddenType::class
+            
         ]
             
            )
@@ -149,43 +153,22 @@ class SequenceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $donnees = $form->getData(); // retourne les données du formulaire dans un tableau
             
-            $nomSequence = $donnees['nom'];
-            $flux = $donnees['data'];
-            $nomSequence=$this->VerifNom($nomSequence);
-            $fluxJson=$this->fluxJson($flux);
-            //$nom=$this->Recup1($nom);
+            $nomSequence = $donnees['nom']; // Récupère les données du champ 'nom'
+            $flux = $donnees['data'];   // Récupère les données du champ 'data'
             
-            /*if (empty($nomSequence)) {
-                $nomSequence = "sequence";
-            }
+            $nomSequence=$this->VerifNom($nomSequence); //appel de la fonction VerifNom()
+            $fluxJson=$this->fluxJson($flux);           //appel de la fonction fluxJson()
             
-            $nomSequence = str_replace(' ', '', $nomSequence);
-            $tailleSequence = strlen($nomSequence);
-            $nom = substr($nomSequence, 0, $tailleSequence);
-            
-            $i = 1;
-            
-            $flux = explode(",", $flux);
-            $tab1=array_chunk($flux, 6);
-            $fluxJson = json_encode($tab1);
-            //dump($nomSequence);
-            while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
-                
-                $nomSequence = $nom . $i;
-                $i ++;
-            }
-            $nomSequence = $nomSequence . ".json";*/
-            $filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $fluxJson);
+            $filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $fluxJson);   //met le contenu de la variable $fluxJson dans la variable $nomSequence
             // ////Enregistrement du fichier dans la bdd///////////////////////
-            $sequenceBdd = new Sequence();
-            //$sequenceBdd = $repo->findOneURLByEnd($nomFichierSequence);
-            // dump($sequenceBdd);
-            $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
-            // dump($nomSequence);
+            $sequenceBdd = new Sequence();      //Instanciation d'un nouvel objet de la classe Sequence
+            
+            $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence; //l'url du ficiher $nomSequence
+            
             date_default_timezone_set('Europe/Paris');
             $dateJour = new \DateTime();
             $sequenceBdd->setUrl($url);
-            //dump($dateJour);
+            
             
             $sequenceBdd->setDate($dateJour);
             $manager->persist($sequenceBdd);
@@ -202,81 +185,7 @@ class SequenceController extends AbstractController
     
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    /**
-     *
-     * @Route("/sequence/traitement/{nomFichierSequence}", name="sequence_traitement")
-     */
-    /*public function script($nomFichierSequence = null, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
-    {
-        // $nomSequence=$nomFichierSequence;
-        if (isset($_GET['data'])) {
-            $nomSequence = $_GET['nomsequence'];
-            
-            $flux = $_GET['data'];
-            // dump($flux);
-            
-            if (empty($nomSequence)) {
-                $nomSequence = "sequence";
-            }
-            // $nomSequence = $nomFichierSequence;
-            $filesystem = new Filesystem();
-            $pathcourant = getcwd();
-            
-            $filesystem->mkdir(DOSSIER_SEQUENCES, 0777);
-            $nomSequence = str_replace(' ', '', $nomSequence);
-            $tailleSequence = strlen($nomSequence);
-            $nom = substr($nomSequence, 0, $tailleSequence);
-            
-            $i = 1;
-            
-            $flux = explode(",", $flux);
-            $fluxJson = json_encode($flux);
-            // dump($fluxJson);
-            while (file_exists(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence . ".json")) {
-                
-                $nomSequence = $nom . $i;
-                $i ++;
-            }
-            
-            $nomSequence = $nomSequence . ".json";
-            
-            $filesystem->dumpFile(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence, $fluxJson);
-            
-            // ////Enregistrement du fichier dans la bdd///////////////////////
-            $sequenceBdd = new Sequence();
-            $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomSequence;
-            // $url = $_SERVER['DOCUMENT_ROOT'].$nomSequence; //url de la séquence enregistrée
-            $dateJour = new \DateTime();
-            dump($dateJour);
-            $sequenceBdd->setUrl($url);
-            $sequenceBdd->setDate($dateJour);
-            
-            $manager->persist($sequenceBdd);
-            $manager->flush();
-            $this->addFlash("success", "La séquence " . $nomSequence . " a bien été enregistrée");
-            return $this->redirectToRoute('sequence_selectionnerSequence');
-        }
-        return $this->redirectToRoute('sequence_selectionnerSequence');
-    }*/
-    
-    /**
-     *
-     * @Route("/accueil", name="sequence_accueil")
-     */
-    public function accueilSequence()
-    {
-        return $this->render('sequence/accueilSequence.html.twig', [
-            'controller_name' => 'SequenceController'
-        ]);
-    }
+  
     
     /**
      *
@@ -286,9 +195,9 @@ class SequenceController extends AbstractController
     {
         $sequence = "";
         // dd($nomFichierSequence);
-        $file = DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence;
+        $file = DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence;  //endroit où est le fichier $nomFichierSequence
         if (file_exists($file)) {
-            $sequence = file_get_contents($file);
+            $sequence = file_get_contents($file);   //récupération du contenu de la variable $file pour le mettre dans la variable $sequence
             //dd($sequence);
         }
         return $this->render('sequence/afficher.html.twig', [
@@ -355,11 +264,11 @@ class SequenceController extends AbstractController
      */
     public function suppressionFichier($nomFichierSequence, EntityManagerInterface $manager, SequenceRepository $repo)
     {
-        $pathcourant = getcwd();
-        $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence;
+        $pathcourant = getcwd();    //https://www.php.net/manual/fr/function.getcwd.php : Retourne le dossier de travail courant
+        $url = $pathcourant . DIRECTORY_SEPARATOR . DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence;  //url du fichier $nomFichierSequence
         // $url = $_SERVER['DOCUMENT_ROOT'].$nomFichierSequence; //url de la séquence enregistrée en base de données
-        unlink(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence); // suppression du fichier
-        $sequence = new Sequence();
+        unlink(DOSSIER_SEQUENCES . DIRECTORY_SEPARATOR . $nomFichierSequence); // https://www.php.net/manual/fr/function.unlink.php : suppression du fichier
+        $sequence = new Sequence(); //Instanciation d'un nouvel objet de la classe Sequence
         $sequence = $repo->findOneBy(array(
             "url" => $url
         )); // recherche dans la base de données l'enregistrement qui a l'url "$url"
