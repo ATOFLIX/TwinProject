@@ -4,7 +4,7 @@ namespace App\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-//use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Sequence;
 use App\Repository\SequenceRepository;
 use Symfony\Component\Filesystem\Filesystem;
@@ -89,9 +89,9 @@ class SequenceController extends AbstractController
     */
     /**
      *
-     * @Route("/sequence/rename/{nomFichierSequence}", name="sequence_rename")
+     * @Route("/sequence/renommer/{nomFichierSequence}", name="sequence_renommer")
      */
-    public function rename($nomFichierSequence, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
+    public function renommer($nomFichierSequence, Request $request, SequenceRepository $repo, EntityManagerInterface $manager)
     {
         $pathcourant = getcwd();    //https://www.php.net/manual/fr/function.getcwd.php : Retourne le dossier de travail courant
         // création du formulaire avec les différents champs leurs types, leurs contraintes et attributs , et le submit
@@ -242,7 +242,7 @@ class SequenceController extends AbstractController
             // {
             foreach ($_POST['cocher'] as $sequence) {
                 
-                return $this->redirectToRoute('sequence_rename', [
+                return $this->redirectToRoute('sequence_renommer', [
                     "nomFichierSequence" => $sequence
                 ]);
             }
