@@ -9,10 +9,10 @@ class affichageSequence extends AbstractExtension
 {
     public function getFilters()
     {
-        return [new TwigFilter('affichage', [$this, 'affichageFilter'])];
+        return [new TwigFilter('affichageSequence', [$this, 'affichageSequenceFilter'])];
     }
     
-    public function affichageFilter($content)
+    public function affichageSequenceFilter($content)
     {
         $tableau=preg_split("/[\/\\\]/",$content); //https://www.php.net/manual/fr/function.preg-split.php : permet
         return $tableau;
