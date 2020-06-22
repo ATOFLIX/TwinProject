@@ -4,7 +4,7 @@
 
 {% block body %}
 <h1>Affichage de la séquence "{{ nomSequence }}"</h1>
-
+{% set var=sequence | jsonMultiAsso %}
 <table class="table table-bordered table-dark">
   <thead>
     <tr>
@@ -17,19 +17,33 @@
     </tr>
   </thead>
   <tbody>
-{% for  une in sequence |json_decode | chunkTableau %}
-<tr>
- {%  for deux in une  %} 
+{# {% for  cle, valeur in sequence |json_decode | chunkTableau %} #}
 
- <td class="text-center">{{ deux }}</td> 
-{# }<td class="text-center">{{ une }}</td> #}
+
+
+{# {{ dump(une) }}  #}
+
+<tr>
+{% for une in var %}
+{% for deux in une %}
+{% for trois in deux %}
+
+   <td class="text-center">{{ trois }}</td> 
+{# {{ dump(deux) }} #}
+{# {%  for cle1, deux in valeur  %} #}
+{# <td class="text-center">{{ deux }}</td> #}
+{# <td class="text-center">{{ deux }}</td> #}
+
  {% endfor %} 
+  {% endfor %} 
 </tr>
-{% endfor %}
+{% endfor %} 
+
 </tbody>
 </table>
 
-<a href="{{ path('sequence_traitement1') }}" target="_blank"><button class="btn btn-outline-success">Enregistrement d'une séquence</button></a><br><br>
+
+<a href="{{ path('sequence_enregistrerSequence') }}" target="_blank"><button class="btn btn-outline-success">Enregistrement d'une séquence</button></a><br><br>
 <a href="{{ path('sequence_selectionnerSequence') }}" target="_blank"><button class="btn btn-outline-primary">Affichage et suppression des séquences</button> </a>
 
 {% endblock %}
