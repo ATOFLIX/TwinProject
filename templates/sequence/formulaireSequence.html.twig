@@ -21,12 +21,12 @@ Sélection fichiers!!
 
 				{%  for une in sequence %}
 				<tr>
-					<td>{{ une.url |affichage | last }}</td>
+					<td>{{ une.url |affichageSequence | last }}</td>
 					<td>{{ une.date | date('d-m-Y H:i:s')}}</td>
 					<td>
 						<div>
 							<input class="cocher" type="checkbox" name="cocher[]"
-								value="{{ une.url |affichage| last }}">
+								value="{{ une.url |affichageSequence| last }}">
 						</div>
 					</td>
 				</tr>
